@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/site.css">
+    <title>Керування групами</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="Index.html">Головна</a></li>
+            <li><a href="Subjects.html">Предмети</a></li>
+            <li><a href="Groups.html">Групи</a></li>
+        </ul>
+    </nav>
+
+    <section id="add-group">
+        <h2>Створити групу</h2>
+        <form id="add-group-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Groups')">
+            <input type="text" id="add-Groups-name" placeholder="Назва групи" required>
+            <input type="submit" value="Створити групу">
+        </form>
+    </section>
+
+    <div id="editGroups" class="edit-container" style="display: none;">
+        <h3>Редагування інформації про групу</h3>
+        <form id="edit-group-form" action="javascript:void(0);" onsubmit="updateEntity('Groups')">
+            <input type="hidden" id="edit-Groups-id">
+            <input type="text" id="edit-Groups-name" required>
+            <button type="submit">Зберегти</button>
+            <a href="#" onclick="closeInput('Groups')">Скасувати</a>
+        </form>
+    </div>
+
+    <section id="groups-list">
+        <h2>Список груп</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody id="groups"></tbody>
+        </table>
+    </section>
+
+    <script src="js/site.js"></script>
+    <script src="js/groups.js"></script>
+</body>
+</html>

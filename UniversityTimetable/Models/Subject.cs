@@ -10,5 +10,7 @@ public partial class Subject
 
     [Column(TypeName = "nvarchar(50)")]
     public string Name { get; set; }
+    public int LectureHours { get; set; }
+    public int PracticalHours { get; set; }
     public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
 }

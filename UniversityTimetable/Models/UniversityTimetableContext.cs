@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UniversityTimetable.Models;
 
 namespace UniversityTimetable.Models;
 
@@ -13,4 +14,6 @@ public class UniversityTimetableContext : DbContext
     {
         Database.EnsureCreated();
     }
+
+public DbSet<UniversityTimetable.Models.Group> Group { get; set; } = default!;
 }
