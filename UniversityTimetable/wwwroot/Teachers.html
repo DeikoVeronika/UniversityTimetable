@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/site.css">
+    <title>Керування викладачами</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="Index.html">Головна</a></li>
+            <li><a href="Subjects.html">Предмети</a></li>
+            <li><a href="Groups.html">Групи</a></li>
+            <li><a href="Teachers.html">Вчителі</a></li>
+        </ul>
+    </nav>
+
+    <section id="add-teacher">
+        <h2>Додати викладача</h2>
+        <form id="add-teacher-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Teachers')">
+            <input type="text" id="add-Teachers-name" placeholder="Назва викладача" required>
+            <input type="submit" value="Додати викладача">
+        </form>
+    </section>
+
+    <div id="editTeachers" class="edit-container">
+        <h3>Редагування викладача</h3>
+        <form id="edit-teacher-form" action="javascript:void(0);" onsubmit="updateEntity('Teachers')">
+            <input type="hidden" id="edit-Teachers-id">
+            <input type="text" id="edit-Teachers-name" required>
+            <button type="submit">Зберегти</button>
+            <a href="#" onclick="closeInput('Teachers')">Скасувати</a>
+        </form>
+    </div>
+
+    <section id="teachers-list">
+        <h2>Список викладачів</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody id="teachers"></tbody>
+        </table>
+    </section>
+
+    <script src="js/site.js"></script>
+    <script src="js/teachers.js"></script>
+</body>
+</html>
