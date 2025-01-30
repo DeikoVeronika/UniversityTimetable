@@ -7,6 +7,7 @@ public class UniversityTimetableContext : DbContext
 {
     public virtual DbSet<Subject> Subjects { get; set; }
     public virtual DbSet<Teacher> Teachers { get; set; }
+    public virtual DbSet<Group> Groups { get; set; }
     public virtual DbSet<TeacherSubject> TeacherSubjects { get; set; }
 
     public UniversityTimetableContext(DbContextOptions<UniversityTimetableContext> options)
@@ -15,5 +16,4 @@ public class UniversityTimetableContext : DbContext
         Database.EnsureCreated();
     }
 
-public DbSet<UniversityTimetable.Models.Group> Group { get; set; } = default!;
 }
