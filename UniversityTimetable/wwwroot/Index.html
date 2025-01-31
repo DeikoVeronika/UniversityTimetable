@@ -15,37 +15,39 @@
         </ul>
     </nav>
 
-    <section id="add-lesson">
+    <section id="add-Lessons">
         <h2>Створити урок</h2>
         <form id="lesson-form" action="javascript:void(0);" onsubmit="addEntity('Lessons')">
-            <select id="group" required></select>
-            <select id="subject" required></select>
-            <select id="teacher" required></select>
-            <select id="day" required></select>
-            <select id="time" required></select>
+            <select id="add-Lessons-group" required></select>
+            <select id="add-Lessons-subject" required></select>
+            <select id="add-Lessons-teacher" required></select>
+            <select id="add-Lessons-day" required></select>
+            <select id="add-Lessons-time" required></select>
             <label>
-                <input id="even-week" type="checkbox"> Чи парний тиждень?
+                <input id="add-Lessons-even-week" type="checkbox"> Чи парний тиждень?
             </label>
             <button type="submit">Створити</button>
         </form>
     </section>
 
+
     <div id="editLessons" class="edit-container">
         <h3>Редагування уроку</h3>
-        <form id="edit-lesson-form" action="javascript:void(0);" onsubmit="updateEntity('Lessons')">
+        <form id="edit-Lessons-form" action="javascript:void(0);" onsubmit="updateEntity('Lessons')">
             <input type="hidden" id="edit-Lessons-id">
-            <select id="edit-group" required></select>
-            <select id="edit-subject" required></select>
-            <select id="edit-teacher" required></select>
-            <select id="edit-day" required></select>
-            <select id="edit-time" required></select>
+            <select id="edit-Lessons-group" required></select>
+            <select id="edit-Lessons-subject" required></select>
+            <select id="edit-Lessons-teacher" required></select>
+            <select id="edit-Lessons-day" required></select>
+            <select id="edit-Lessons-time" required></select>
             <label>
-                <input id="edit-even-week" type="checkbox"> Чи парний тиждень?
+                <input id="edit-Lessons-even-week" type="checkbox"> Чи парний тиждень?
             </label>
             <button type="submit">Зберегти</button>
             <a href="#" onclick="closeInput('Lessons')">Скасувати</a>
         </form>
     </div>
+
 
     <section id="lessons-list">
         <h2>Список уроків</h2>
@@ -66,6 +68,6 @@
     </section>
 
     <script src="js/site.js"></script>
-    <script src="js/lessons.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>

@@ -25,8 +25,27 @@ namespace UniversityTimetable.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Lesson>>> GetLessons()
         {
-            return await _context.Lessons.ToListAsync();
+            var lessons = await _context.Lessons
+                .Include(l => l.Group)      
+                .Include(l => l.Subject)   
+                .Include(l => l.Teacher)   
+                .ToListAsync();
+
+            // Перетворюємо на DTO (Data Transfer Object), щоб повернути лише необхідні дані
+            var lessonDtos = lessons.Select(lesson => new
+            {
+                lesson.Id,
+                GroupName = lesson.Group.Name,
+                SubjectName = lesson.Subject.Name,
+                TeacherName = lesson.Teacher.Name,
+                DayOfWeek = lesson.DayOfWeek,
+                StartTime = lesson.StartTime.ToString(@"hh\:mm"),
+                IsEvenWeek = lesson.IsEvenWeek
+            }).ToList();
+
+            return Ok(lessonDtos);
         }
+
 
         // GET: api/Lessons/5
         [HttpGet("{id}")]

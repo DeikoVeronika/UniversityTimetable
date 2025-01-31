@@ -15,12 +15,12 @@ public partial class Lesson
     public bool IsEvenWeek { get; set; }
 
     [ForeignKey("GroupId")]
-    public virtual Group Group { get; set; }
+    public virtual Group? Group { get; set; }
 
     [ForeignKey("SubjectId")]
-    public virtual Subject Subject { get; set; }
+    public virtual Subject? Subject { get; set; }
 
     [ForeignKey("TeacherId")]
-    public virtual Teacher Teacher { get; set; }
+    public virtual Teacher? Teacher { get; set; }
 }
 
