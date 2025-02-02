@@ -68,7 +68,7 @@ function createEntityBody(entity) {
 }
 
 function getLessonsData() {
-    const body = {}; 
+    const body = {};
     body.groupId = document.getElementById('add-Lessons-group').value;
     body.subjectId = document.getElementById('add-Lessons-subject').value;
     body.teacherId = document.getElementById('add-Lessons-teacher').value;
@@ -79,7 +79,7 @@ function getLessonsData() {
 }
 
 function getSubjectsData() {
-    const body = {}; 
+    const body = {};
     body.name = document.getElementById('add-Subjects-name').value.trim();
     body.lectureHours = parseInt(document.getElementById('add-Subjects-lectureHours').value, 10);
     body.practicalHours = parseInt(document.getElementById('add-Subjects-practicalHours').value, 10);
@@ -87,13 +87,13 @@ function getSubjectsData() {
 }
 
 function getGroupsData() {
-    const body = {}; 
+    const body = {};
     body.name = document.getElementById('add-Groups-name').value.trim();
     return body;
 }
 
 function getTeachersData() {
-    const body = {}; 
+    const body = {};
     body.name = document.getElementById('add-Teachers-name').value.trim();
     return body;
 }
@@ -106,7 +106,7 @@ async function loadDropdownData(url, dropdownId) {
         const data = await response.json();
         const dropdown = document.getElementById(dropdownId);
 
-        dropdown.innerHTML = ''; 
+        dropdown.innerHTML = '';
         data.forEach(item => {
             const option = document.createElement('option');
             option.value = item.id;
@@ -203,7 +203,7 @@ async function updateEntity(entity) {
 
 function getLessonsEditFormData() {
     return {
-        groupId: document.getElementById('edit-Lessons-group').value, 
+        groupId: document.getElementById('edit-Lessons-group').value,
         subjectId: document.getElementById('edit-Lessons-subject').value,
         teacherId: document.getElementById('edit-Lessons-teacher').value,
         dayOfWeek: parseInt(document.getElementById('edit-Lessons-day').value, 10),
@@ -262,17 +262,45 @@ async function deleteEntity(entity, id) {
 
 // Entity Display
 function displayEntities(entity, data) {
-    const tBody = document.getElementById(entity.toLowerCase());
-    tBody.innerHTML = '';
+    let tBody;
 
-    data.forEach(item => {
-        const row = tBody.insertRow();
-        populateEntityRow(entity, row, item);
-        const actionsCell = row.insertCell();
-        addActionButton(actionsCell, 'Редагувати', () => displayEditForm(entity, item));
-        addActionButton(actionsCell, 'Видалити', () => deleteEntity(entity, item.id));
-    });
+    // Для уроків — розділяємо на дві таблиці
+    if (entity === 'Lessons') {
+        const evenTBody = document.getElementById('lessons-even');  // для парного тижня
+        const oddTBody = document.getElementById('lessons-odd');    // для непарного тижня
+
+        evenTBody.innerHTML = '';  // очищаємо попередні дані
+        oddTBody.innerHTML = '';
+
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            populateEntityRow(entity, row, item);
+            const actionsCell = row.insertCell();
+            addActionButton(actionsCell, 'Редагувати', () => displayEditForm(entity, item));
+            addActionButton(actionsCell, 'Видалити', () => deleteEntity(entity, item.id));
+
+            // В залежності від того, парний чи непарний тиждень
+            if (item.isEvenWeek) {
+                evenTBody.appendChild(row);
+            } else {
+                oddTBody.appendChild(row);
+            }
+        });
+    } else {
+        // Для інших сутностей, як-от Groups, Subjects, Teachers
+        tBody = document.getElementById(entity.toLowerCase());
+        tBody.innerHTML = '';
+
+        data.forEach(item => {
+            const row = tBody.insertRow();
+            populateEntityRow(entity, row, item);
+            const actionsCell = row.insertCell();
+            addActionButton(actionsCell, 'Редагувати', () => displayEditForm(entity, item));
+            addActionButton(actionsCell, 'Видалити', () => deleteEntity(entity, item.id));
+        });
+    }
 }
+
 
 
 // Row Population
@@ -306,7 +334,7 @@ function populateLessonsRow(row, item) {
     row.insertCell().textContent = item.groupName;
     row.insertCell().textContent = item.subjectName;
     row.insertCell().textContent = item.teacherName;
-    row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek); 
+    row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek);
     row.insertCell().textContent = item.startTime;
     row.insertCell().textContent = item.isEvenWeek ? 'Парний' : 'Непарний';
 }
@@ -373,7 +401,7 @@ function populateDaysEdit() {
 }
 
 function getDayOfWeekIndex(day) {
-    return parseInt(day, 10); 
+    return parseInt(day, 10);
 }
 function getDayOfWeekString(dayIndex) {
     const days = [

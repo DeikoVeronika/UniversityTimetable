@@ -49,8 +49,8 @@
     </div>
 
 
-    <section id="lessons-list">
-        <h2>Список уроків</h2>
+    <section id="lessons-even-week">
+        <h2>Непарний тиждень</h2>
         <table>
             <thead>
                 <tr>
@@ -63,9 +63,32 @@
                     <th>Дії</th>
                 </tr>
             </thead>
-            <tbody id="lessons"></tbody>
+            <tbody id="lessons-even">
+                <!-- Сюди додаватимуться уроки для парного тижня -->
+            </tbody>
         </table>
     </section>
+
+    <section id="lessons-odd-week">
+        <h2>Парний тиждень</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Група</th>
+                    <th>Предмет</th>
+                    <th>Викладач</th>
+                    <th>День</th>
+                    <th>Час</th>
+                    <th>Парний тиждень</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody id="lessons-odd">
+                <!-- Сюди додаватимуться уроки для непарного тижня -->
+            </tbody>
+        </table>
+    </section>
+
 
     <script src="js/site.js"></script>
     <script src="js/index.js"></script>
