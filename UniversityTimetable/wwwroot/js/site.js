@@ -1,11 +1,11 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
-    loadData();
-});
+﻿document.addEventListener("DOMContentLoaded", loadData);
 
 async function loadData() {
-    await fetchData('Groups', populateGroups);
-    await fetchData('Subjects', populateSubjects);
-    await fetchData('Teachers', populateTeachers);
+    await Promise.all([
+        fetchData('Groups', populateGroups),
+        fetchData('Subjects', populateSubjects),
+        fetchData('Teachers', populateTeachers)
+    ]);
     populateDaysCreate();
     populateTimesCreate();
 }
@@ -262,43 +262,34 @@ async function deleteEntity(entity, id) {
 
 // Entity Display
 function displayEntities(entity, data) {
-    let tBody;
+    const tBody = entity === 'Lessons' ?
+        { even: document.getElementById('lessons-even'), odd: document.getElementById('lessons-odd') } :
+        document.getElementById(entity.toLowerCase());
 
-    // Для уроків — розділяємо на дві таблиці
     if (entity === 'Lessons') {
-        const evenTBody = document.getElementById('lessons-even');  // для парного тижня
-        const oddTBody = document.getElementById('lessons-odd');    // для непарного тижня
-
-        evenTBody.innerHTML = '';  // очищаємо попередні дані
-        oddTBody.innerHTML = '';
+        tBody.even.innerHTML = '';
+        tBody.odd.innerHTML = '';
 
         data.forEach(item => {
-            const row = document.createElement('tr');
-            populateEntityRow(entity, row, item);
-            const actionsCell = row.insertCell();
-            addActionButton(actionsCell, 'Редагувати', () => displayEditForm(entity, item));
-            addActionButton(actionsCell, 'Видалити', () => deleteEntity(entity, item.id));
-
-            // В залежності від того, парний чи непарний тиждень
-            if (item.isEvenWeek) {
-                evenTBody.appendChild(row);
-            } else {
-                oddTBody.appendChild(row);
-            }
+            const row = createRow(entity, item);
+            item.isEvenWeek ? tBody.even.appendChild(row) : tBody.odd.appendChild(row);
         });
     } else {
-        // Для інших сутностей, як-от Groups, Subjects, Teachers
-        tBody = document.getElementById(entity.toLowerCase());
         tBody.innerHTML = '';
-
         data.forEach(item => {
-            const row = tBody.insertRow();
-            populateEntityRow(entity, row, item);
-            const actionsCell = row.insertCell();
-            addActionButton(actionsCell, 'Редагувати', () => displayEditForm(entity, item));
-            addActionButton(actionsCell, 'Видалити', () => deleteEntity(entity, item.id));
+            const row = createRow(entity, item);
+            tBody.appendChild(row);
         });
     }
+}
+
+function createRow(entity, item) {
+    const row = document.createElement('tr');
+    populateEntityRow(entity, row, item);
+    const actionsCell = row.insertCell();
+    addActionButton(actionsCell, 'Редагувати', () => displayEditForm(entity, item));
+    addActionButton(actionsCell, 'Видалити', () => deleteEntity(entity, item.id));
+    return row;
 }
 
 
@@ -355,65 +346,47 @@ function populateTeachers(data) {
     populateSelect('add-Lessons-teacher', data.map(teacher => ({ id: teacher.id, name: teacher.name })));
 }
 
-function populateTimesCreate() {
-    const times = [
-        { value: '08:40', label: '08:40' },
-        { value: '10:35', label: '10:35' },
-        { value: '12:20', label: '12:20' },
-        { value: '14:05', label: '14:05' }
-    ];
-    populateSelect('add-Lessons-time', times);
-}
-
-function populateTimesEdit() {
-    const times = [
-        { value: '08:40', label: '08:40' },
-        { value: '10:35', label: '10:35' },
-        { value: '12:20', label: '12:20' },
-        { value: '14:05', label: '14:05' }
-    ];
-    populateSelect('edit-Lessons-time', times);
-}
-
-function populateDaysCreate() {
-    const days = [
-        { value: 0, name: 'Неділя' },
-        { value: 1, name: 'Понеділок' },
-        { value: 2, name: 'Вівторок' },
-        { value: 3, name: 'Середа' },
-        { value: 4, name: 'Четвер' },
-        { value: 5, name: `П'ятниця` },
-        { value: 6, name: 'Субота' }
-    ];
-    populateSelect('add-Lessons-day', days);
-}
-function populateDaysEdit() {
-    const days = [
-        { value: 0, name: 'Неділя' },
-        { value: 1, name: 'Понеділок' },
-        { value: 2, name: 'Вівторок' },
-        { value: 3, name: 'Середа' },
-        { value: 4, name: 'Четвер' },
-        { value: 5, name: `П'ятниця` },
-        { value: 6, name: 'Субота' }
-    ];
-    populateSelect('edit-Lessons-day', days);
-}
-
 function getDayOfWeekIndex(day) {
     return parseInt(day, 10);
 }
-function getDayOfWeekString(dayIndex) {
-    const days = [
-        'Неділя',
-        'Понеділок',
-        'Вівторок',
-        'Середа',
-        'Четвер',
-        'П\'ятниця',
-        'Субота'
+
+function populateTimes(id) {
+    const times = [
+        { value: '08:40', label: '08:40' },
+        { value: '10:35', label: '10:35' },
+        { value: '12:20', label: '12:20' },
+        { value: '14:05', label: '14:05' }
     ];
-    return days[dayIndex] || 'Невідомий день';
+    populateSelect(id, times);
+}
+
+function populateDays(id) {
+    const days = [
+        { value: 0, name: 'Неділя' },
+        { value: 1, name: 'Понеділок' },
+        { value: 2, name: 'Вівторок' },
+        { value: 3, name: 'Середа' },
+        { value: 4, name: 'Четвер' },
+        { value: 5, name: `П'ятниця` },
+        { value: 6, name: 'Субота' }
+    ];
+    populateSelect(id, days);
+}
+
+function populateTimesCreate() {
+    populateTimes('add-Lessons-time');
+}
+
+function populateTimesEdit() {
+    populateTimes('edit-Lessons-time');
+}
+
+function populateDaysCreate() {
+    populateDays('add-Lessons-day');
+}
+
+function populateDaysEdit() {
+    populateDays('edit-Lessons-day');
 }
 
 function populateSelect(id, items) {
