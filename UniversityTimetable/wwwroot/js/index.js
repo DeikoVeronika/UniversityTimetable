@@ -16,7 +16,8 @@ async function loadData() {
     await Promise.all([
         fetchData('Groups', populateGroups),
         fetchData('Subjects', populateSubjects),
-        fetchData('Teachers', populateTeachers)
+        fetchData('Teachers', populateTeachers),
+        fetchData('Auditoriums', populateAuditoriums)
     ]);
     populateDaysCreate();
     populateTimesCreate();

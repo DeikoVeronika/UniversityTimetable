@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/site.css">
+    <title>Керування викладачами</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="Index.html">Головна</a></li>
+            <li><a href="Subjects.html">Предмети</a></li>
+            <li><a href="Groups.html">Групи</a></li>
+            <li><a href="Teachers.html">Вчителі</a></li>
+            <li><a href="Auditoriums.html">Аудиторії</a></li>
+        </ul>
+    </nav>
+
+    <section id="add-auditorium">
+        <h2>Додати аудиторію</h2>
+        <form id="add-auditorium-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Auditoriums')">
+            <input type="text" id="add-Auditoriums-name" placeholder="Назва аудиторії" required>
+            <input type="submit" value="Додати аудиторію">
+        </form>
+    </section>
+
+    <div id="editAuditoriums" class="edit-container">
+        <h3>Редагування аудиторії</h3>
+        <form id="edit-auditorium-form" action="javascript:void(0);" onsubmit="updateEntity('Auditoriums')">
+            <input type="hidden" id="edit-Auditoriums-id">
+            <input type="text" id="edit-Auditoriums-name" required>
+            <button type="submit">Зберегти</button>
+            <a href="#" onclick="closeInput('Auditoriums')">Скасувати</a>
+        </form>
+    </div>
+
+    <section id="auditoriums-list">
+        <h2>Список аудиторій</h2>
+        <table>
+            <thead>
+                <tr class="header">
+                    <th>Назва</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody id="auditoriums"></tbody>
+        </table>
+    </section>
+
+    <script src="js/Pages/auditoriumsPage.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/auditoriums.js"></script>
+</body>
+</html>

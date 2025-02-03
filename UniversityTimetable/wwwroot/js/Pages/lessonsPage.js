@@ -1,17 +1,22 @@
 ﻿function getLessonsData() {
-    const body = {};
-    body.groupId = document.getElementById('add-Lessons-group').value;
-    body.subjectId = document.getElementById('add-Lessons-subject').value;
-    body.teacherId = document.getElementById('add-Lessons-teacher').value;
-    body.dayOfWeek = getDayOfWeekIndex(document.getElementById('add-Lessons-day').value);
-    body.startTime = document.getElementById('add-Lessons-time').value;
-    body.isEvenWeek = document.getElementById('add-Lessons-even-week').checked;
+    const body = {
+        groupId: document.getElementById('add-Lessons-group').value,
+        subjectId: document.getElementById('add-Lessons-subject').value,
+        teacherId: document.getElementById('add-Lessons-teacher').value,
+        auditoriumId: document.getElementById('add-Lessons-auditorium').value,
+        dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
+        startTime: formatTime(document.getElementById('add-Lessons-time').value), 
+        isEvenWeek: document.getElementById('add-Lessons-even-week').checked
+    };
+
     return body;
 }
+
 async function loadAllDropdowns() {
     await loadDropdownData('/api/groups', 'edit-Lessons-group');
     await loadDropdownData('/api/subjects', 'edit-Lessons-subject');
     await loadDropdownData('/api/teachers', 'edit-Lessons-teacher');
+    await loadDropdownData('/api/auditoriums', 'edit-Lessons-auditorium');
     populateDaysEdit();
     populateTimesEdit();
 }
@@ -19,24 +24,29 @@ function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-group').value = item.groupId;
     document.getElementById('edit-Lessons-subject').value = item.subjectId;
     document.getElementById('edit-Lessons-teacher').value = item.teacherId;
+    document.getElementById('edit-Lessons-auditorium').value = item.auditoriumId;
     document.getElementById('edit-Lessons-day').value = item.dayOfWeek;
     document.getElementById('edit-Lessons-time').value = item.startTime;
     document.getElementById('edit-Lessons-even-week').checked = item.isEvenWeek;
 }
+
 function getLessonsEditFormData() {
     return {
         groupId: document.getElementById('edit-Lessons-group').value,
         subjectId: document.getElementById('edit-Lessons-subject').value,
         teacherId: document.getElementById('edit-Lessons-teacher').value,
+        auditoriumId: document.getElementById('edit-Lessons-auditorium').value,
         dayOfWeek: parseInt(document.getElementById('edit-Lessons-day').value, 10),
-        startTime: document.getElementById('edit-Lessons-time').value,
+        startTime: formatTime(document.getElementById('edit-Lessons-time').value), 
         isEvenWeek: document.getElementById('edit-Lessons-even-week').checked
     };
 }
+
 function populateLessonsRow(row, item) {
     row.insertCell().textContent = item.groupName;
     row.insertCell().textContent = item.subjectName;
     row.insertCell().textContent = item.teacherName;
+    row.insertCell().textContent = item.auditoriumName;
     row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek);
     row.insertCell().textContent = item.startTime;
     row.insertCell().textContent = item.isEvenWeek ? 'Парний' : 'Непарний';
@@ -65,6 +75,9 @@ function populateSubjects(data) {
 
 function populateTeachers(data) {
     populateSelect('add-Lessons-teacher', data.map(teacher => ({ id: teacher.id, name: teacher.name })));
+}
+function populateAuditoriums(data) {
+    populateSelect('add-Lessons-auditorium', data.map(auditorium => ({ id: auditorium.id, name: auditorium.name })));
 }
 
 function getDayOfWeekIndex(day) {
@@ -108,4 +121,7 @@ function populateDaysCreate() {
 
 function populateDaysEdit() {
     populateDays('edit-Lessons-day');
+}
+function formatTime(time) {
+    return time.length === 5 ? time + ":00" : time;
 }

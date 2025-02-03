@@ -51,6 +51,8 @@ function createEntityBody(entity) {
         return getGroupsData();
     } else if (entity === 'Teachers') {
         return getTeachersData();
+    } else if (entity === 'Auditoriums') {
+        return getAuditoriumsData();
     } else {
         return {};
     }
@@ -87,6 +89,8 @@ async function displayEditForm(entity, item) {
         setGroupsEditFormValues(item);
     } else if (entity === 'Teachers') {
         setTeachersEditFormValues(item);
+    } else if (entity === 'Auditoriums') {
+        setAuditoriumsEditFormValues(item);
     }
 
     document.getElementById(`edit${entity}`).style.display = 'block';
@@ -105,6 +109,8 @@ async function updateEntity(entity) {
         Object.assign(body, getGroupsEditFormData());
     } else if (entity === 'Teachers') {
         Object.assign(body, getTeachersEditFormData());
+    } else if (entity === 'Auditoriums') {
+        Object.assign(body, getAuditoriumsEditFormData());
     }
 
     try {
@@ -211,6 +217,8 @@ function populateEntityRow(entity, row, item) {
         populateTeachersRow(row, item);
     } else if (entity === 'Lessons') {
         populateLessonsRow(row, item);
+    } else if (entity === 'Auditoriums') {
+        populateAuditoriumsRow(row, item);
     }
 }
 

@@ -6,10 +6,11 @@ namespace UniversityTimetable.Models;
 public partial class Lesson
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public Guid GroupId { get; set; }
     public Guid SubjectId { get; set; }
     public Guid TeacherId { get; set; }
+    public Guid AuditoriumId { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
     public TimeSpan StartTime { get; set; }
     public bool IsEvenWeek { get; set; }
@@ -22,5 +23,8 @@ public partial class Lesson
 
     [ForeignKey("TeacherId")]
     public virtual Teacher? Teacher { get; set; }
+
+    [ForeignKey("AuditoriumId")]
+    public virtual Auditorium? Auditorium { get; set; }
 }
 

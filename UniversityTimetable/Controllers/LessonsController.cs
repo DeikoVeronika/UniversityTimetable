@@ -29,6 +29,7 @@ namespace UniversityTimetable.Controllers
                 .Include(l => l.Group)
                 .Include(l => l.Subject)
                 .Include(l => l.Teacher)
+                .Include(l => l.Auditorium)
                 .ToListAsync();
 
             var lessonDtos = lessons.Select(lesson => new
@@ -38,6 +39,8 @@ namespace UniversityTimetable.Controllers
                 GroupName = lesson.Group.Name,
                 SubjectId = lesson.Subject.Id,
                 SubjectName = lesson.Subject.Name,
+                AuditoriumId = lesson.Auditorium.Id,
+                AuditoriumName = lesson.Auditorium.Name,
                 TeacherId = lesson.Teacher.Id,
                 TeacherName = lesson.Teacher.Name,
                 DayOfWeek = lesson.DayOfWeek,
@@ -51,12 +54,13 @@ namespace UniversityTimetable.Controllers
 
         // GET: api/Lessons/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<object>> GetLesson(int id)
+        public async Task<ActionResult<object>> GetLesson(Guid id)
         {
             var lesson = await _context.Lessons
                 .Include(l => l.Group)
                 .Include(l => l.Subject)
                 .Include(l => l.Teacher)
+                .Include(l => l.Auditorium)
                 .FirstOrDefaultAsync(l => l.Id == id);
 
             if (lesson == null)
@@ -70,6 +74,7 @@ namespace UniversityTimetable.Controllers
                 GroupId = lesson.Group.Id,
                 SubjectId = lesson.Subject.Id,
                 TeacherId = lesson.Teacher.Id,
+                AuditoriumId = lesson.Auditorium.Id,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
                 IsEvenWeek = lesson.IsEvenWeek
@@ -80,7 +85,7 @@ namespace UniversityTimetable.Controllers
         // PUT: api/Lessons/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLesson(int id, [FromBody] Lesson lesson)
+        public async Task<IActionResult> PutLesson(Guid id, [FromBody] Lesson lesson)
         {
             if (id != lesson.Id)
             {
@@ -96,6 +101,7 @@ namespace UniversityTimetable.Controllers
             existingLesson.GroupId = lesson.GroupId;
             existingLesson.SubjectId = lesson.SubjectId;
             existingLesson.TeacherId = lesson.TeacherId;
+            existingLesson.AuditoriumId = lesson.AuditoriumId;
             existingLesson.DayOfWeek = lesson.DayOfWeek;
             existingLesson.StartTime = lesson.StartTime;
             existingLesson.IsEvenWeek = lesson.IsEvenWeek;
@@ -136,7 +142,7 @@ namespace UniversityTimetable.Controllers
 
         // DELETE: api/Lessons/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLesson(int id)
+        public async Task<IActionResult> DeleteLesson(Guid id)
         {
             var lesson = await _context.Lessons.FindAsync(id);
             if (lesson == null)
@@ -150,7 +156,7 @@ namespace UniversityTimetable.Controllers
             return NoContent();
         }
 
-        private bool LessonExists(int id)
+        private bool LessonExists(Guid id)
         {
             return _context.Lessons.Any(e => e.Id == id);
         }
