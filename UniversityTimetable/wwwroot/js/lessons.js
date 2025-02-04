@@ -1,7 +1,7 @@
-﻿let lessons = []; // Оголошення масиву перед використанням
+﻿let lessons = [];
 
 fetchData('Lessons', data => {
-    lessons = data; // Присвоюємо отримані дані
-    displayEntities('Lessons', lessons); // Викликаємо функцію відображення
+    lessons = data; 
+    displayEntities('Lessons', lessons); 
     console.log("Завантажені уроки:", lessons);
 });

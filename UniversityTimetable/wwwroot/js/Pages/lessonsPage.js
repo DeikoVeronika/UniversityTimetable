@@ -43,12 +43,12 @@ function getLessonsEditFormData() {
 }
 
 function populateLessonsRow(row, item) {
+    row.insertCell().textContent = item.startTime;
     row.insertCell().textContent = item.groupName;
     row.insertCell().textContent = item.subjectName;
     row.insertCell().textContent = item.teacherName;
     row.insertCell().textContent = item.auditoriumName;
     row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek);
-    row.insertCell().textContent = item.startTime;
     row.insertCell().textContent = item.isEvenWeek ? 'Парний' : 'Непарний';
 }
 
@@ -58,9 +58,8 @@ function getDayOfWeekString(dayOfWeek) {
 function populateGroups(data) {
     populateSelect('add-Lessons-group', data.map(group => ({ id: group.id, name: group.name })));
 
-    // Додаємо оновлення для фільтра груп
     const groupFilter = document.getElementById('group-filter');
-    groupFilter.innerHTML = '<option value="">Всі групи</option>'; // Додаємо варіант "усі"
+    groupFilter.innerHTML = '<option value="">Всі групи</option>'
 
     data.forEach(group => {
         const option = document.createElement('option');

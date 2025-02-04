@@ -1,13 +1,12 @@
-﻿let selectedGroup = ''; // Глобальна змінна для збереження фільтра
+﻿let selectedGroup = ''; 
 
 document.addEventListener("DOMContentLoaded", function () {
-    loadData();  // Завантажуємо дані при завантаженні сторінки
+    loadData();  
 
-    // Додаємо обробник подій для фільтрації
     document.getElementById('group-filter').addEventListener('change', function () {
-        selectedGroup = this.value;  // Оновлюємо глобальну змінну
+        selectedGroup = this.value; 
         const filteredData = selectedGroup ? lessons.filter(lesson => lesson.groupName === selectedGroup) : lessons;
-        displayEntities('Lessons', filteredData);  // Оновлюємо відображення з фільтром
+        displayEntities('Lessons', filteredData); 
     });
 });
 

@@ -33,10 +33,9 @@ async function addEntity(entity) {
             await handleResponseError(response);
         }
 
-        // Оновлюємо список після додавання
         await updateEntityData(entity);
 
-        resetForm(entity);  // Очищаємо форму після додавання
+        resetForm(entity);  
     } catch (error) {
         console.error(`Unable to add ${entity}.`, error);
     }
@@ -124,10 +123,9 @@ async function updateEntity(entity) {
             await handleResponseError(response);
         }
 
-        // Оновлюємо дані після оновлення
         await updateEntityData(entity);
 
-        closeInput(entity);  // Закриваємо форму після оновлення
+        closeInput(entity);  
     } catch (error) {
         console.error(`Unable to update ${entity}.`, error);
         alert(`Помилка оновлення ${entity}. Перевірте консоль.`);
@@ -154,7 +152,6 @@ async function deleteEntity(entity, id) {
             await handleResponseError(response);
         }
 
-        // Оновлюємо дані після видалення
         await updateEntityData(entity);
     } catch (error) {
         console.error(`Unable to delete ${entity}.`, error);
@@ -162,11 +159,9 @@ async function deleteEntity(entity, id) {
 }
 
 async function updateEntityData(entity) {
-    // Завантажуємо нові дані та застосовуємо фільтрацію для уроків
     fetchData(entity, data => {
         if (entity === 'Lessons') {
             lessons = data;
-            // Застосовуємо фільтрацію, якщо є активний фільтр
             const filteredData = selectedGroup ? lessons.filter(lesson => lesson.groupName === selectedGroup) : lessons;
             displayEntities(entity, filteredData);
         } else {
@@ -224,7 +219,7 @@ function populateEntityRow(entity, row, item) {
 
 function populateSelect(id, items, includeAll = false) {
     const select = document.getElementById(id);
-    select.innerHTML = ''; // Очищення перед додаванням нових значень
+    select.innerHTML = ''; 
 
     if (includeAll) {
         const allOption = document.createElement('option');
