@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 * {
     font-family: "Montserrat", serif;
 }
@@ -79,12 +79,19 @@ button, a, input[type="submit"] {
     text-align: start;
     margin: 5px;
     padding: 14px;
-    border: 1px solid #dfdede;
+    border: 1px solid rgb(101 181 246 / 20%);
     border-radius: 12px;
+    box-shadow: 0px 4px 16px rgb(42 60 71 / 3%);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.lesson-card:hover {
+    box-shadow: 0px 4px 16px rgb(42 60 71 / 11%);
 }
 
 .lesson-card div {
     display: flex;
+    gap: 30px;
     justify-content: space-between;
 }
 
@@ -108,7 +115,7 @@ button, a, input[type="submit"] {
 }
 
 .lesson-card .auditorium-name {
-    font-size: 1rem;
+    font-size: 0.85rem;
     letter-spacing: 0.01em;
     font-weight: 500;
 }
@@ -125,6 +132,7 @@ button, a, input[type="submit"] {
 }
 
 .start-lesson-time {
+    text-align: center;
     color: #fff;
     font-weight: 500;
     /*background-color: #2196f3;*/
@@ -134,12 +142,24 @@ button, a, input[type="submit"] {
     font-size: 1.05rem;
 }
 
+#schedule-table th:not(:first-child),
+#schedule-table td:not(:first-child) {
+    width: 220px; 
+    text-align: center;
+    word-wrap: break-word;
+}
+
+#schedule-table th:first-child,
+#schedule-table td:first-child {
+    width: 60px; 
+}
+
 #schedule-body tr:nth-child(even) {
     background-color: #fff;
 }
 
 #schedule-thead th {
-    padding-top: 32px;
+    padding: 32px 0;
 }
 
 #schedule-body td {

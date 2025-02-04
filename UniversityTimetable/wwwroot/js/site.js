@@ -21,25 +21,36 @@ async function addEntity(entity) {
     const body = createEntityBody(entity);
 
     try {
-        const response = await fetch(`api/${entity}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (!response.ok) {
-            await handleResponseError(response);
+        if (Array.isArray(body)) {
+            // Якщо body - масив, відправляємо кожен елемент окремо
+            await Promise.all(body.map(item => sendRequest(entity, item)));
+        } else {
+            // Якщо body - об'єкт, відправляємо звичайним чином
+            await sendRequest(entity, body);
         }
 
         await updateEntityData(entity);
-
-        resetForm(entity);  
+        resetForm(entity);
     } catch (error) {
         console.error(`Unable to add ${entity}.`, error);
     }
 }
+
+// Винесений метод для відправки одного запиту
+async function sendRequest(entity, body) {
+    const response = await fetch(`api/${entity}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        await handleResponseError(response);
+    }
+}
+
 
 function createEntityBody(entity) {
     if (entity === 'Lessons') {

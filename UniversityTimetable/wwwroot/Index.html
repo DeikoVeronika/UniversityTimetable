@@ -25,12 +25,24 @@
             <select id="add-Lessons-auditorium" required></select>
             <select id="add-Lessons-day" required></select>
             <select id="add-Lessons-time" required></select>
-            <label>
-                <input id="add-Lessons-even-week" type="checkbox"> Чи парний тиждень?
-            </label>
+
+            <div class="week-type">
+                <label>
+                    <input type="radio" id="add-Lessons-even-week" name="weekType" value="even"> Парний
+                </label>
+                <label>
+                    <input type="radio" id="add-Lessons-odd-week" name="weekType" value="odd"> Непарний
+                </label>
+                <label>
+                    <input type="radio" id="add-Lessons-both-weeks" name="weekType" value="both" required> Обидва
+                </label>
+            </div>
+
+
             <button type="submit">Створити</button>
         </form>
     </section>
+
 
     <section>
         <div id="editLessons" class="edit-container">
@@ -43,9 +55,16 @@
                 <select id="edit-Lessons-auditorium" required></select>
                 <select id="edit-Lessons-day" required></select>
                 <select id="edit-Lessons-time" required></select>
-                <label>
-                    <input id="edit-Lessons-even-week" type="checkbox"> Чи парний тиждень?
-                </label>
+
+                <div class="week-type">
+                    <label>
+                        <input type="radio" id="edit-Lessons-even-week" name="editWeekType" value="even" required> Парний
+                    </label>
+                    <label>
+                        <input type="radio" id="edit-Lessons-odd-week" name="editWeekType" value="odd"> Непарний
+                    </label>
+                </div>
+
                 <button type="submit">Зберегти</button>
                 <a href="#" onclick="closeInput('Lessons')">Скасувати</a>
             </form>

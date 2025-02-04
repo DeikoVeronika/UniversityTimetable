@@ -1,16 +1,47 @@
 ﻿function getLessonsData() {
-    const body = {
+    let isEvenWeek;
+    const evenWeekRadio = document.getElementById('add-Lessons-even-week');
+    const oddWeekRadio = document.getElementById('add-Lessons-odd-week');
+    const bothWeeksRadio = document.getElementById('add-Lessons-both-weeks');
+
+    if (evenWeekRadio.checked) {
+        isEvenWeek = true;
+    } else if (oddWeekRadio.checked) {
+        isEvenWeek = false;
+    } else if (bothWeeksRadio.checked) {
+        return [ 
+            {
+                groupId: document.getElementById('add-Lessons-group').value,
+                subjectId: document.getElementById('add-Lessons-subject').value,
+                teacherId: document.getElementById('add-Lessons-teacher').value,
+                auditoriumId: document.getElementById('add-Lessons-auditorium').value,
+                dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
+                startTime: formatTime(document.getElementById('add-Lessons-time').value),
+                isEvenWeek: true
+            },
+            {
+                groupId: document.getElementById('add-Lessons-group').value,
+                subjectId: document.getElementById('add-Lessons-subject').value,
+                teacherId: document.getElementById('add-Lessons-teacher').value,
+                auditoriumId: document.getElementById('add-Lessons-auditorium').value,
+                dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
+                startTime: formatTime(document.getElementById('add-Lessons-time').value),
+                isEvenWeek: false
+            }
+        ];
+    }
+
+    return {
         groupId: document.getElementById('add-Lessons-group').value,
         subjectId: document.getElementById('add-Lessons-subject').value,
         teacherId: document.getElementById('add-Lessons-teacher').value,
         auditoriumId: document.getElementById('add-Lessons-auditorium').value,
         dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
-        startTime: formatTime(document.getElementById('add-Lessons-time').value), 
-        isEvenWeek: document.getElementById('add-Lessons-even-week').checked
+        startTime: formatTime(document.getElementById('add-Lessons-time').value),
+        isEvenWeek: isEvenWeek
     };
-
-    return body;
 }
+
 
 async function loadAllDropdowns() {
     await loadDropdownData('/api/groups', 'edit-Lessons-group');
@@ -20,6 +51,7 @@ async function loadAllDropdowns() {
     populateDaysEdit();
     populateTimesEdit();
 }
+
 function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-group').value = item.groupId;
     document.getElementById('edit-Lessons-subject').value = item.subjectId;
@@ -27,10 +59,25 @@ function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-auditorium').value = item.auditoriumId;
     document.getElementById('edit-Lessons-day').value = item.dayOfWeek;
     document.getElementById('edit-Lessons-time').value = item.startTime;
-    document.getElementById('edit-Lessons-even-week').checked = item.isEvenWeek;
+
+    if (item.isEvenWeek) {
+        document.getElementById('edit-Lessons-even-week').checked = true;
+    } else {
+        document.getElementById('edit-Lessons-odd-week').checked = true;
+    }
 }
 
 function getLessonsEditFormData() {
+    let isEvenWeek;
+    const evenWeekRadio = document.getElementById('edit-Lessons-even-week');
+    const oddWeekRadio = document.getElementById('edit-Lessons-odd-week');
+
+    if (evenWeekRadio.checked) {
+        isEvenWeek = true;
+    } else if (oddWeekRadio.checked) {
+        isEvenWeek = false;
+    } 
+
     return {
         groupId: document.getElementById('edit-Lessons-group').value,
         subjectId: document.getElementById('edit-Lessons-subject').value,
@@ -38,7 +85,7 @@ function getLessonsEditFormData() {
         auditoriumId: document.getElementById('edit-Lessons-auditorium').value,
         dayOfWeek: parseInt(document.getElementById('edit-Lessons-day').value, 10),
         startTime: formatTime(document.getElementById('edit-Lessons-time').value), 
-        isEvenWeek: document.getElementById('edit-Lessons-even-week').checked
+        isEvenWeek: isEvenWeek
     };
 }
 
@@ -161,10 +208,10 @@ function createTableCell(content, isFirstColumn = false) {
     const cell = document.createElement("td");
 
     if (isFirstColumn) {
-        const span = document.createElement("span");
-        span.classList.add("start-lesson-time");
-        span.textContent = content;
-        cell.appendChild(span);
+        const div = document.createElement("div");
+        div.classList.add("start-lesson-time");
+        div.textContent = content;
+        cell.appendChild(div);
     } // else {
     //    if (typeof content === "string") {
     //        cell.innerHTML = content; 
