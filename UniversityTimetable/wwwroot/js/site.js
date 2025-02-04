@@ -172,25 +172,19 @@ async function updateEntityData(entity) {
 
 // Entity Display
 function displayEntities(entity, data) {
-    const tBody = entity === 'Lessons' ?
-        { even: document.getElementById('lessons-even'), odd: document.getElementById('lessons-odd') } :
-        document.getElementById(entity.toLowerCase());
-
-    if (entity === 'Lessons') {
-        tBody.even.innerHTML = '';
-        tBody.odd.innerHTML = '';
-
-        data.forEach(item => {
-            const row = createRow(entity, item);
-            item.isEvenWeek ? tBody.even.appendChild(row) : tBody.odd.appendChild(row);
-        });
-    } else {
-        tBody.innerHTML = '';
-        data.forEach(item => {
-            const row = createRow(entity, item);
-            tBody.appendChild(row);
-        });
+    if (entity === "Lessons") {
+        populateSchedule(data);
+        return;
     }
+
+    const tBody = document.getElementById(entity.toLowerCase());
+    if (!tBody) return;
+
+    tBody.innerHTML = "";
+    data.forEach(item => {
+        const row = createRow(entity, item);
+        tBody.appendChild(row);
+    });
 }
 
 function createRow(entity, item) {
