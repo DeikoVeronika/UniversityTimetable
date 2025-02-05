@@ -21,36 +21,25 @@ async function addEntity(entity) {
     const body = createEntityBody(entity);
 
     try {
-        if (Array.isArray(body)) {
-            // Якщо body - масив, відправляємо кожен елемент окремо
-            await Promise.all(body.map(item => sendRequest(entity, item)));
-        } else {
-            // Якщо body - об'єкт, відправляємо звичайним чином
-            await sendRequest(entity, body);
+        const response = await fetch(`api/${entity}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            await handleResponseError(response);
         }
 
         await updateEntityData(entity);
+
         resetForm(entity);
     } catch (error) {
         console.error(`Unable to add ${entity}.`, error);
     }
 }
-
-// Винесений метод для відправки одного запиту
-async function sendRequest(entity, body) {
-    const response = await fetch(`api/${entity}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-        await handleResponseError(response);
-    }
-}
-
 
 function createEntityBody(entity) {
     if (entity === 'Lessons') {
@@ -136,7 +125,7 @@ async function updateEntity(entity) {
 
         await updateEntityData(entity);
 
-        closeInput(entity);  
+        closeInput(entity);
     } catch (error) {
         console.error(`Unable to update ${entity}.`, error);
         alert(`Помилка оновлення ${entity}. Перевірте консоль.`);
@@ -224,7 +213,7 @@ function populateEntityRow(entity, row, item) {
 
 function populateSelect(id, items, includeAll = false) {
     const select = document.getElementById(id);
-    select.innerHTML = ''; 
+    select.innerHTML = '';
 
     if (includeAll) {
         const allOption = document.createElement('option');

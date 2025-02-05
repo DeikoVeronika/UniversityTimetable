@@ -1,37 +1,70 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
 * {
-    font-family: "Montserrat", serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
 }
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 body {
-    font-family: sans-serif;
+    min-height: 100%;
     margin-bottom: 60px;
 }
 
-table {
+a {
+    text-decoration: none;
+}
+
+.content {
+    margin: 0 1rem;
+}
+
+.nav-element {
+    list-style: none;
+}
+
+.nav-element a {
+    font-weight: 500;
     letter-spacing: 0.01em;
-    border-collapse: collapse;
-    border-spacing: 0;
+    line-height: 1.5;
+}
+
+.navbar {
+    border: 1px solid rgba(101, 181, 246, 0.2);
+    box-shadow: 0px 4px 16px rgba(42, 60, 71, 0.03);
+    background: rgba(255, 255, 255, 0.9);
+    margin: 1rem;
+    border-radius: 16px;
+    padding: 15px 30px;
+}
+
+.lesson-body {
+    margin-top: -19px;
+}
+
+.navbar ul {
+    display: flex;
+    gap: 3rem;
+}
+
+table {
     width: 100%;
+    border-collapse: collapse;
     border: 1px solid #ddd;
 }
 
@@ -57,7 +90,6 @@ input[type="text"] {
     width: 100%;
     padding: 5px;
     margin-bottom: 10px;
-    box-sizing: border-box;
 }
 
 button, a, input[type="submit"] {
@@ -66,32 +98,61 @@ button, a, input[type="submit"] {
     cursor: pointer;
 }
 
-.edit-container {
-    display: none;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #f9f9f9;
+select {
+    width: 300px;
+    height: 35px;
+    margin: 5px 0;
+    padding-left: 5px;
 }
 
-/*Start Schedule Page*/
+.form-control {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control label{
+    margin-bottom: 4px;
+}
+
+.edit-container {
+    display: none;
+}
+
+/*Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* Start Schedule Page */
 .lesson-card {
     text-align: start;
     margin: 5px;
     padding: 14px;
-    border: 1px solid rgb(101 181 246 / 20%);
+    border: 1px solid rgba(101, 181, 246, 0.2);
     border-radius: 12px;
-    box-shadow: 0px 4px 16px rgb(42 60 71 / 3%);
+    box-shadow: 0px 4px 16px rgba(42, 60, 71, 0.03);
     background: rgba(255, 255, 255, 0.9);
 }
 
 .lesson-card:hover {
-    box-shadow: 0px 4px 16px rgb(42 60 71 / 11%);
+    cursor: pointer;
+    box-shadow: 0px 4px 16px rgba(42, 60, 71, 0.11);
 }
 
 .lesson-card div {
     display: flex;
-    gap: 30px;
+    gap: 0.6rem;
     justify-content: space-between;
 }
 
@@ -101,16 +162,14 @@ button, a, input[type="submit"] {
     gap: 10px;
 }
 
-
 .lesson-card .week-type {
     text-align: center;
     line-height: 1.5;
     font-size: 0.875rem;
     font-weight: 600;
-    padding: 3px 10px;
+    padding: 4px 14px;
     border-radius: 14px;
     color: #fff;
-    /*background-color: #64b5f6;*/
     background-color: #1ca2fb;
 }
 
@@ -128,15 +187,14 @@ button, a, input[type="submit"] {
 .lesson-card .teacher-name {
     font-size: 13px;
     font-weight: 500;
-    line-height: 16px;  
+    line-height: 16px;
 }
 
 .start-lesson-time {
     text-align: center;
     color: #fff;
     font-weight: 500;
-    /*background-color: #2196f3;*/
-    background-color: #1679f4;
+    background-color: #1371e3;
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 1.05rem;
@@ -144,14 +202,14 @@ button, a, input[type="submit"] {
 
 #schedule-table th:not(:first-child),
 #schedule-table td:not(:first-child) {
-    width: 220px; 
+    width: 220px;
     text-align: center;
     word-wrap: break-word;
 }
 
 #schedule-table th:first-child,
 #schedule-table td:first-child {
-    width: 60px; 
+    width: 60px;
 }
 
 #schedule-body tr:nth-child(even) {
@@ -166,3 +224,73 @@ button, a, input[type="submit"] {
     vertical-align: top;
 }
 
+.form-content {
+    padding: 25px 32px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(101, 181, 246, 0.2);
+    border-radius: 16px;
+}
+
+.form-content h2 {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-content form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.form-content button {
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    font-weight: 600;
+    padding: 10px 32px;
+    background: none;
+    border: 1px solid #1371e3;
+    width: 50%;
+    border-radius: 55px;
+    transition: all 0.2s ease-in-out;
+}
+
+.edit-form-btns {
+    width: 50%;
+    display: flex;
+}
+
+.form-content button:hover {
+    background-color: #1371e3;
+    color: white;
+}
+
+.edit-form-btns #delete-lesson-button {
+    border: 1px solid #a50606;
+}
+.edit-form-btns #delete-lesson-button:hover {
+    background-color: #a50606;
+    color: white
+}
+
+.form-control-groups {
+    display: flex;
+    justify-content: space-around;
+    width: 80%;
+}
+
+.form-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    justify-content: center;
+}
+
+.week-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}

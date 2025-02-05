@@ -29,77 +29,64 @@
             width: 50%;
         }
 
-        /* The Close Button */
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
-    <nav>
+    <nav class="navbar">
         <ul>
-            <li><a href="Index.html">Головна</a></li>
-            <li><a href="Subjects.html">Предмети</a></li>
-            <li><a href="Groups.html">Групи</a></li>
-            <li><a href="Teachers.html">Вчителі</a></li>
-            <li><a href="Auditoriums.html">Аудиторії</a></li>
+            <li class="nav-element"><a href="Index.html">Головна</a></li>
+            <li class="nav-element"><a href="Subjects.html">Предмети</a></li>
+            <li class="nav-element"><a href="Groups.html">Групи</a></li>
+            <li class="nav-element"><a href="Teachers.html">Вчителі</a></li>
+            <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
         </ul>
     </nav>
+    <div class="content">
+        <section>
+            <!-- Trigger/Open The Modal -->
+            <button id="myBtn">Open Modal</button>
 
-    <section>
-        <!-- Trigger/Open The Modal -->
-        <button id="myBtn">Open Modal</button>
-
-        <!-- The Modal -->
-        <div id="myModal" class="modal">
-            <!-- Modal content -->
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <div id="add-group">
-                    <h2>Створити групу</h2>
-                    <form id="add-group-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Groups')">
-                        <input type="text" id="add-Groups-name" placeholder="Назва групи" required>
-                        <input type="submit" value="Створити групу">
-                    </form>
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="add-group">
+                        <h2>Створити групу</h2>
+                        <form id="add-group-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Groups')">
+                            <input type="text" id="add-Groups-name" placeholder="Назва групи" required>
+                            <input type="submit" value="Створити групу">
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section>
-        <div id="editGroups" class="edit-container" style="display: none;">
-            <h3>Редагування інформації про групу</h3>
-            <form id="edit-group-form" action="javascript:void(0);" onsubmit="updateEntity('Groups')">
-                <input type="hidden" id="edit-Groups-id">
-                <input type="text" id="edit-Groups-name" required>
-                <button type="submit">Зберегти</button>
-                <a href="#" onclick="closeInput('Groups')">Скасувати</a>
-            </form>
-        </div>
-    </section>
+        <section>
+            <div id="editGroups" class="edit-container" style="display: none;">
+                <h3>Редагування інформації про групу</h3>
+                <form id="edit-group-form" action="javascript:void(0);" onsubmit="updateEntity('Groups')">
+                    <input type="hidden" id="edit-Groups-id">
+                    <input type="text" id="edit-Groups-name" required>
+                    <button type="submit">Зберегти</button>
+                    <a href="#" onclick="closeInput('Groups')">Скасувати</a>
+                </form>
+            </div>
+        </section>
 
-    <section id="groups-list">
-        <h2>Список груп</h2>
-        <table>
-            <thead>
-                <tr class="header">
-                    <th>Назва</th>
-                    <th>Дії</th>
-                </tr>
-            </thead>
-            <tbody id="groups"></tbody>
-        </table>
-    </section>
+        <section id="groups-list">
+            <h2>Список груп</h2>
+            <table>
+                <thead>
+                    <tr class="header">
+                        <th>Назва</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody id="groups"></tbody>
+            </table>
+        </section>
+    </div>
 
     <script src="js/Pages/groupsPage.js"></script>
     <script src="js/site.js"></script>

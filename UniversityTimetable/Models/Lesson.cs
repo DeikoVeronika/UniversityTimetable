@@ -1,7 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NuGet.Protocol;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UniversityTimetable.Models;
+
+public enum WeekType
+    {
+    Both,
+    Odd,
+    Even
+}
 
 public partial class Lesson
 {
@@ -13,7 +21,7 @@ public partial class Lesson
     public Guid AuditoriumId { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
     public TimeSpan StartTime { get; set; }
-    public bool IsEvenWeek { get; set; }
+    public WeekType Week { get; set; }
 
     [ForeignKey("GroupId")]
     public virtual Group? Group { get; set; }

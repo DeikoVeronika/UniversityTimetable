@@ -6,52 +6,53 @@
     <title>Керування предметами</title>
 </head>
 <body>
-    <nav>
+    <nav class="navbar">
         <ul>
-            <li><a href="Index.html">Головна</a></li>
-            <li><a href="Subjects.html">Предмети</a></li>
-            <li><a href="Groups.html">Групи</a></li>
-            <li><a href="Teachers.html">Вчителі</a></li>
-            <li><a href="Auditoriums.html">Аудиторії</a></li>
+            <li class="nav-element"><a href="Index.html">Головна</a></li>
+            <li class="nav-element"><a href="Subjects.html">Предмети</a></li>
+            <li class="nav-element"><a href="Groups.html">Групи</a></li>
+            <li class="nav-element"><a href="Teachers.html">Вчителі</a></li>
+            <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
         </ul>
     </nav>
+    <div class="content">
+        <section id="add-subject">
+            <h2>Додати предмет</h2>
+            <form id="add-subject-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Subjects')">
+                <input type="text" id="add-Subjects-name" placeholder="Назва предмета" required>
+                <input type="number" id="add-Subjects-lectureHours" placeholder="Години лекцій" required>
+                <input type="number" id="add-Subjects-practicalHours" placeholder="Години практик" required>
+                <input type="submit" value="Додати предмет">
+            </form>
+        </section>
 
-    <section id="add-subject">
-        <h2>Додати предмет</h2>
-        <form id="add-subject-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Subjects')">
-            <input type="text" id="add-Subjects-name" placeholder="Назва предмета" required>
-            <input type="number" id="add-Subjects-lectureHours" placeholder="Години лекцій" required>
-            <input type="number" id="add-Subjects-practicalHours" placeholder="Години практик" required>
-            <input type="submit" value="Додати предмет">
-        </form>
-    </section>
+        <div id="editSubjects" class="edit-container">
+            <h3>Редагування предмета</h3>
+            <form id="edit-subject-form" action="javascript:void(0);" onsubmit="updateEntity('Subjects')">
+                <input type="hidden" id="edit-Subjects-id">
+                <input type="text" id="edit-Subjects-name" required>
+                <input type="number" id="edit-Subjects-lectureHours" placeholder="Години лекцій" required>
+                <input type="number" id="edit-Subjects-practicalHours" placeholder="Години практик" required>
+                <button type="submit">Зберегти</button>
+                <a href="#" onclick="closeInput('Subjects')">Скасувати</a>
+            </form>
+        </div>
 
-    <div id="editSubjects" class="edit-container">
-        <h3>Редагування предмета</h3>
-        <form id="edit-subject-form" action="javascript:void(0);" onsubmit="updateEntity('Subjects')">
-            <input type="hidden" id="edit-Subjects-id">
-            <input type="text" id="edit-Subjects-name" required>
-            <input type="number" id="edit-Subjects-lectureHours" placeholder="Години лекцій" required>
-            <input type="number" id="edit-Subjects-practicalHours" placeholder="Години практик" required>
-            <button type="submit">Зберегти</button>
-            <a href="#" onclick="closeInput('Subjects')">Скасувати</a>
-        </form>
+        <section id="subjects-list">
+            <h2>Список предметів</h2>
+            <table>
+                <thead>
+                    <tr class="header">
+                        <th>Назва</th>
+                        <th>Години лекцій</th>
+                        <th>Години практик</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody id="subjects"></tbody>
+            </table>
+        </section>
     </div>
-
-    <section id="subjects-list">
-        <h2>Список предметів</h2>
-        <table>
-            <thead>
-                <tr class="header">
-                    <th>Назва</th>
-                    <th>Години лекцій</th>
-                    <th>Години практик</th>
-                    <th>Дії</th>
-                </tr>
-            </thead>
-            <tbody id="subjects"></tbody>
-        </table>
-    </section>
 
     <script src="js/Pages/subjectsPage.js"></script>
     <script src="js/site.js"></script>

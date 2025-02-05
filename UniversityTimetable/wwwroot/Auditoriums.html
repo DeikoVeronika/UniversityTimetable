@@ -6,46 +6,47 @@
     <title>Керування викладачами</title>
 </head>
 <body>
-    <nav>
+    <nav class="navbar">
         <ul>
-            <li><a href="Index.html">Головна</a></li>
-            <li><a href="Subjects.html">Предмети</a></li>
-            <li><a href="Groups.html">Групи</a></li>
-            <li><a href="Teachers.html">Вчителі</a></li>
-            <li><a href="Auditoriums.html">Аудиторії</a></li>
+            <li class="nav-element"><a href="Index.html">Головна</a></li>
+            <li class="nav-element"><a href="Subjects.html">Предмети</a></li>
+            <li class="nav-element"><a href="Groups.html">Групи</a></li>
+            <li class="nav-element"><a href="Teachers.html">Вчителі</a></li>
+            <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
         </ul>
     </nav>
+    <div class="content">
+        <section id="add-auditorium">
+            <h2>Додати аудиторію</h2>
+            <form id="add-auditorium-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Auditoriums')">
+                <input type="text" id="add-Auditoriums-name" placeholder="Назва аудиторії" required>
+                <input type="submit" value="Додати аудиторію">
+            </form>
+        </section>
 
-    <section id="add-auditorium">
-        <h2>Додати аудиторію</h2>
-        <form id="add-auditorium-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Auditoriums')">
-            <input type="text" id="add-Auditoriums-name" placeholder="Назва аудиторії" required>
-            <input type="submit" value="Додати аудиторію">
-        </form>
-    </section>
+        <div id="editAuditoriums" class="edit-container">
+            <h3>Редагування аудиторії</h3>
+            <form id="edit-auditorium-form" action="javascript:void(0);" onsubmit="updateEntity('Auditoriums')">
+                <input type="hidden" id="edit-Auditoriums-id">
+                <input type="text" id="edit-Auditoriums-name" required>
+                <button type="submit">Зберегти</button>
+                <a href="#" onclick="closeInput('Auditoriums')">Скасувати</a>
+            </form>
+        </div>
 
-    <div id="editAuditoriums" class="edit-container">
-        <h3>Редагування аудиторії</h3>
-        <form id="edit-auditorium-form" action="javascript:void(0);" onsubmit="updateEntity('Auditoriums')">
-            <input type="hidden" id="edit-Auditoriums-id">
-            <input type="text" id="edit-Auditoriums-name" required>
-            <button type="submit">Зберегти</button>
-            <a href="#" onclick="closeInput('Auditoriums')">Скасувати</a>
-        </form>
+        <section id="auditoriums-list">
+            <h2>Список аудиторій</h2>
+            <table>
+                <thead>
+                    <tr class="header">
+                        <th>Назва</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody id="auditoriums"></tbody>
+            </table>
+        </section>
     </div>
-
-    <section id="auditoriums-list">
-        <h2>Список аудиторій</h2>
-        <table>
-            <thead>
-                <tr class="header">
-                    <th>Назва</th>
-                    <th>Дії</th>
-                </tr>
-            </thead>
-            <tbody id="auditoriums"></tbody>
-        </table>
-    </section>
 
     <script src="js/Pages/auditoriumsPage.js"></script>
     <script src="js/site.js"></script>

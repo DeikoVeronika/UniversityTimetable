@@ -1,47 +1,28 @@
-﻿function getLessonsData() {
-    let isEvenWeek;
-    const evenWeekRadio = document.getElementById('add-Lessons-even-week');
-    const oddWeekRadio = document.getElementById('add-Lessons-odd-week');
-    const bothWeeksRadio = document.getElementById('add-Lessons-both-weeks');
+﻿const WEEK_TYPE = {
+    BOTH: "Н/П",
+    ODD: "Непарний",
+    EVEN: "Парний"
+}
 
-    if (evenWeekRadio.checked) {
-        isEvenWeek = true;
-    } else if (oddWeekRadio.checked) {
-        isEvenWeek = false;
-    } else if (bothWeeksRadio.checked) {
-        return [ 
-            {
-                groupId: document.getElementById('add-Lessons-group').value,
-                subjectId: document.getElementById('add-Lessons-subject').value,
-                teacherId: document.getElementById('add-Lessons-teacher').value,
-                auditoriumId: document.getElementById('add-Lessons-auditorium').value,
-                dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
-                startTime: formatTime(document.getElementById('add-Lessons-time').value),
-                isEvenWeek: true
-            },
-            {
-                groupId: document.getElementById('add-Lessons-group').value,
-                subjectId: document.getElementById('add-Lessons-subject').value,
-                teacherId: document.getElementById('add-Lessons-teacher').value,
-                auditoriumId: document.getElementById('add-Lessons-auditorium').value,
-                dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
-                startTime: formatTime(document.getElementById('add-Lessons-time').value),
-                isEvenWeek: false
-            }
-        ];
+function getLessonsData() {
+    let weekValue;
+    const selectedWeek = document.querySelector('input[name="add-Lessons-week"]:checked');
+    if (selectedWeek) {
+        weekValue = parseInt(selectedWeek.value, 10);
     }
 
-    return {
+    const body = {
         groupId: document.getElementById('add-Lessons-group').value,
         subjectId: document.getElementById('add-Lessons-subject').value,
         teacherId: document.getElementById('add-Lessons-teacher').value,
         auditoriumId: document.getElementById('add-Lessons-auditorium').value,
         dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
         startTime: formatTime(document.getElementById('add-Lessons-time').value),
-        isEvenWeek: isEvenWeek
+        week: weekValue
     };
-}
 
+    return body;
+}
 
 async function loadAllDropdowns() {
     await loadDropdownData('/api/groups', 'edit-Lessons-group');
@@ -50,8 +31,8 @@ async function loadAllDropdowns() {
     await loadDropdownData('/api/auditoriums', 'edit-Lessons-auditorium');
     populateDaysEdit();
     populateTimesEdit();
+    //populateWeeksEdit();
 }
-
 function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-group').value = item.groupId;
     document.getElementById('edit-Lessons-subject').value = item.subjectId;
@@ -60,22 +41,30 @@ function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-day').value = item.dayOfWeek;
     document.getElementById('edit-Lessons-time').value = item.startTime;
 
-    if (item.isEvenWeek) {
-        document.getElementById('edit-Lessons-even-week').checked = true;
-    } else {
-        document.getElementById('edit-Lessons-odd-week').checked = true;
-    }
+    const weekRadioButtons = document.querySelectorAll('input[name="edit-Lessons-week"]');
+    weekRadioButtons.forEach(radio => {
+        if (parseInt(radio.value, 10) === item.week) {
+            radio.checked = true;
+        }
+    });
+
+    const deleteButton = document.getElementById('delete-lesson-button');
+    deleteButton.onclick = () => {
+        //if (confirm("Ви впевнені, що хочете видалити цей урок?")) {
+        //    deleteEntity("Lessons", item.id);
+        //    closeInput("Lessons");
+        //}
+        deleteEntity("Lessons", item.id);
+        closeInput("Lessons");
+    };
 }
 
-function getLessonsEditFormData() {
-    let isEvenWeek;
-    const evenWeekRadio = document.getElementById('edit-Lessons-even-week');
-    const oddWeekRadio = document.getElementById('edit-Lessons-odd-week');
 
-    if (evenWeekRadio.checked) {
-        isEvenWeek = true;
-    } else if (oddWeekRadio.checked) {
-        isEvenWeek = false;
+function getLessonsEditFormData() {
+    let weekValue;
+    const selectedWeek = document.querySelector('input[name="edit-Lessons-week"]:checked');
+    if (selectedWeek) {
+        weekValue = parseInt(selectedWeek.value, 10);
     } 
 
     return {
@@ -84,10 +73,11 @@ function getLessonsEditFormData() {
         teacherId: document.getElementById('edit-Lessons-teacher').value,
         auditoriumId: document.getElementById('edit-Lessons-auditorium').value,
         dayOfWeek: parseInt(document.getElementById('edit-Lessons-day').value, 10),
-        startTime: formatTime(document.getElementById('edit-Lessons-time').value), 
-        isEvenWeek: isEvenWeek
+        startTime: formatTime(document.getElementById('edit-Lessons-time').value),
+        week: weekValue
     };
 }
+
 
 function populateSchedule(data) {
     const scheduleBody = document.getElementById("schedule-body");
@@ -127,7 +117,7 @@ function populateLessonsRow(row, item) {
     row.insertCell().textContent = item.teacherName;
     row.insertCell().textContent = item.auditoriumName;
     row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek);
-    row.insertCell().textContent = item.isEvenWeek ? 'Парний' : 'Непарний';
+    row.insertCell().textContent = item.week;
 }
 
 
@@ -185,6 +175,15 @@ function populateDays(id) {
     populateSelect(id, days);
 }
 
+//function populateWeeks(id) {
+//    const weeks = [
+//        { value: 0, name: WEEK_TYPE.BOTH },
+//        { value: 1, name: WEEK_TYPE.EVEN },
+//        { value: 2, name: WEEK_TYPE.ODD }
+//    ];
+//    populateSelect(id, weeks);
+//}
+
 function populateTimesCreate() {
     populateTimes('add-Lessons-time');
 }
@@ -200,6 +199,15 @@ function populateDaysCreate() {
 function populateDaysEdit() {
     populateDays('edit-Lessons-day');
 }
+
+//function populateWeeksCreate() {
+//    populateWeeks('add-Lessons-week');
+//}
+
+//function populateWeeksEdit() {
+//    populateWeeks('edit-Lessons-week');
+//}
+
 function formatTime(time) {
     return time.length === 5 ? time + ":00" : time;
 }
@@ -208,10 +216,10 @@ function createTableCell(content, isFirstColumn = false) {
     const cell = document.createElement("td");
 
     if (isFirstColumn) {
-        const div = document.createElement("div");
-        div.classList.add("start-lesson-time");
-        div.textContent = content;
-        cell.appendChild(div);
+        const span = document.createElement("span");
+        span.classList.add("start-lesson-time");
+        span.textContent = content;
+        cell.appendChild(span);
     } // else {
     //    if (typeof content === "string") {
     //        cell.innerHTML = content; 
@@ -223,8 +231,6 @@ function createTableCell(content, isFirstColumn = false) {
     return cell;
 }
 
-
-
 function createLessonDiv(item) {
     const lessonDiv = document.createElement("div");
     lessonDiv.classList.add("lesson-card");
@@ -232,21 +238,26 @@ function createLessonDiv(item) {
     const lessonInfo = document.createElement("div");
     lessonInfo.classList.add("lesson-info");
 
+    let weekType = WEEK_TYPE.BOTH;
+    if (item.week === 1) weekType = WEEK_TYPE.ODD;
+    else if (item.week === 2) weekType = WEEK_TYPE.EVEN;
+
     lessonInfo.innerHTML = `
-          <div>
-          <span class="week-type">${item.isEvenWeek ? 'Парний' : 'Непарний'}</span>
-          <span class="auditorium-name">каб: ${item.auditoriumName}</span>
-          </div>
-          <span class="subject-name">${item.subjectName}</span>
-          <span class="teacher-name">${item.teacherName}</span>
+        <div>
+            <span class="week-type">${weekType}</span>
+            <span class="auditorium-name">каб: ${item.auditoriumName}</span>
+        </div>
+        <span class="subject-name">${item.subjectName}</span>
+        <span class="teacher-name">${item.teacherName}</span>
     `;
 
     lessonDiv.appendChild(lessonInfo);
-    lessonDiv.appendChild(createLessonButton("Редагувати", () => displayEditForm("Lessons", item)));
-    lessonDiv.appendChild(createLessonButton("Видалити", () => deleteEntity("Lessons", item.id)));
+    lessonDiv.addEventListener("click", () => displayEditForm("Lessons", item));
 
     return lessonDiv;
 }
+
+
 
 function createLessonButton(text, onClick) {
     const button = document.createElement("button");
@@ -254,4 +265,3 @@ function createLessonButton(text, onClick) {
     button.onclick = onClick;
     return button;
 }
-

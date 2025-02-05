@@ -1,23 +1,32 @@
 ﻿let selectedGroup = ''; 
 
-document.addEventListener("DOMContentLoaded", function () {
-    loadData();  
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        await Promise.all([
+            fetchData('Groups', populateGroups),
+            fetchData('Subjects', populateSubjects),
+            fetchData('Teachers', populateTeachers),
+            fetchData('Auditoriums', populateAuditoriums)
+        ]);
 
-    document.getElementById('group-filter').addEventListener('change', function () {
-        selectedGroup = this.value; 
-        const filteredData = selectedGroup ? lessons.filter(lesson => lesson.groupName === selectedGroup) : lessons;
-        displayEntities('Lessons', filteredData); 
-    });
+        populateDaysCreate();
+        populateTimesCreate();
+        document.getElementById('week-both').checked = true;
+
+        fetchData('Lessons', data => {
+            lessons = data;
+            displayEntities('Lessons', lessons);
+            console.log("Завантажені уроки:", lessons);
+
+            document.getElementById('group-filter').addEventListener('change', function () {
+                selectedGroup = this.value;
+                const filteredData = selectedGroup ? lessons.filter(lesson => lesson.groupName === selectedGroup) : lessons;
+                displayEntities('Lessons', filteredData);
+            });
+        });
+
+
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
 });
-
-
-async function loadData() {
-    await Promise.all([
-        fetchData('Groups', populateGroups),
-        fetchData('Subjects', populateSubjects),
-        fetchData('Teachers', populateTeachers),
-        fetchData('Auditoriums', populateAuditoriums)
-    ]);
-    populateDaysCreate();
-    populateTimesCreate();
-}

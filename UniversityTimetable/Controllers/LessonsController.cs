@@ -45,7 +45,7 @@ namespace UniversityTimetable.Controllers
                 TeacherName = lesson.Teacher.Name,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
-                IsEvenWeek = lesson.IsEvenWeek
+                Week = lesson.Week
             }).ToList();
 
             return Ok(lessonDtos);
@@ -77,7 +77,7 @@ namespace UniversityTimetable.Controllers
                 AuditoriumId = lesson.Auditorium.Id,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
-                IsEvenWeek = lesson.IsEvenWeek
+                Week = lesson.Week
             });
         }
 
@@ -104,7 +104,7 @@ namespace UniversityTimetable.Controllers
             existingLesson.AuditoriumId = lesson.AuditoriumId;
             existingLesson.DayOfWeek = lesson.DayOfWeek;
             existingLesson.StartTime = lesson.StartTime;
-            existingLesson.IsEvenWeek = lesson.IsEvenWeek;
+            existingLesson.Week = lesson.Week;
 
             try
             {
