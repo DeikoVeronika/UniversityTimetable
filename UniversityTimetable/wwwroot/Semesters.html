@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/site.css">
+    <title>Керування семестрами</title>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li class="nav-element"><a href="Index.html">Головна</a></li>
+            <li class="nav-element"><a href="Subjects.html">Предмети</a></li>
+            <li class="nav-element"><a href="Groups.html">Групи</a></li>
+            <li class="nav-element"><a href="Teachers.html">Вчителі</a></li>
+            <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
+            <li class="nav-element"><a href="Semesters.html">Семестри</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <section id="add-semester">
+            <h2>Створити семестр</h2>
+            <form id="add-semester-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Semesters')">
+                <input type="text" id="add-Semesters-name" placeholder="Назва семестру" required>
+                <input type="date" id="add-Semesters-startDate" placeholder="Дата початку семестру" required>
+                <input type="date" id="add-Semesters-endDate" placeholder="Дата завершення семестру" required>
+                <input type="submit" value="Створити семестр">
+            </form>
+        </section>
+
+        <div id="editSemesters" class="edit-container">
+            <h3>Редагування інформації про семестр</h3>
+            <form id="edit-semester-form" action="javascript:void(0);" onsubmit="updateEntity('Semesters')">
+                <input type="hidden" id="edit-Semesters-id">
+                <input type="text" id="edit-Semesters-name" required>
+                <input type="date" id="edit-Semesters-startDate" required>
+                <input type="date" id="edit-Semesters-endDate" required>
+                <button type="submit">Зберегти</button>
+                <a href="#" onclick="closeInput('Semesters')">Скасувати</a>
+            </form>
+        </div>
+
+        <section id="semesters-list">
+            <h2>Семестри</h2>
+            <table>
+                <thead>
+                    <tr class="header">
+                        <th>Назва</th>
+                        <th>Початок</th>
+                        <th>Завершення</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody id="semesters"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="js/Pages/semestersPage.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/semesters.js"></script>
+</body>
+</html>

@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             fetchData('Groups', populateGroups),
             fetchData('Subjects', populateSubjects),
             fetchData('Teachers', populateTeachers),
-            fetchData('Auditoriums', populateAuditoriums)
+            fetchData('Auditoriums', populateAuditoriums),
+            fetchData('Semesters', populateSemesters)
         ]);
 
         populateDaysCreate();

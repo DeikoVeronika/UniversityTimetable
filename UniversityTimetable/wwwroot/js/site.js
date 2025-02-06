@@ -52,6 +52,8 @@ function createEntityBody(entity) {
         return getTeachersData();
     } else if (entity === 'Auditoriums') {
         return getAuditoriumsData();
+    } else if (entity === 'Semesters') {
+        return getSemestersData();
     } else {
         return {};
     }
@@ -90,6 +92,8 @@ async function displayEditForm(entity, item) {
         setTeachersEditFormValues(item);
     } else if (entity === 'Auditoriums') {
         setAuditoriumsEditFormValues(item);
+    } else if (entity === 'Semesters') {
+        setSemestersEditFormValues(item);
     }
 
     document.getElementById(`edit${entity}`).style.display = 'block';
@@ -110,6 +114,8 @@ async function updateEntity(entity) {
         Object.assign(body, getTeachersEditFormData());
     } else if (entity === 'Auditoriums') {
         Object.assign(body, getAuditoriumsEditFormData());
+    } else if (entity === 'Semesters') {
+        Object.assign(body, getSemestersEditFormData());
     }
 
     try {
@@ -141,6 +147,10 @@ function resetForm(entity) {
     if (entity === 'Subjects') {
         document.getElementById(`add-${entity}-lectureHours`).value = '';
         document.getElementById(`add-${entity}-practicalHours`).value = '';
+    }
+    if (entity === 'Semesters') {
+        document.getElementById(`add-${entity}-startDate`).value = '';
+        document.getElementById(`add-${entity}-endDate`).value = '';
     }
 }
 
@@ -208,6 +218,8 @@ function populateEntityRow(entity, row, item) {
         populateLessonsRow(row, item);
     } else if (entity === 'Auditoriums') {
         populateAuditoriumsRow(row, item);
+    } else if (entity === 'Semesters') {
+        populateSemestersRow(row, item);
     }
 }
 

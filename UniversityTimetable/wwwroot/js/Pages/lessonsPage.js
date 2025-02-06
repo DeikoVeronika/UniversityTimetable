@@ -18,7 +18,8 @@ function getLessonsData() {
         auditoriumId: document.getElementById('add-Lessons-auditorium').value,
         dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
         startTime: formatTime(document.getElementById('add-Lessons-time').value),
-        week: weekValue
+        week: weekValue,
+        semesterId: document.getElementById('add-Lessons-semester').value
     };
 
     return body;
@@ -29,6 +30,7 @@ async function loadAllDropdowns() {
     await loadDropdownData('/api/subjects', 'edit-Lessons-subject');
     await loadDropdownData('/api/teachers', 'edit-Lessons-teacher');
     await loadDropdownData('/api/auditoriums', 'edit-Lessons-auditorium');
+    await loadDropdownData('/api/semesters', 'edit-Lessons-semester');
     populateDaysEdit();
     populateTimesEdit();
     //populateWeeksEdit();
@@ -40,6 +42,7 @@ function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-auditorium').value = item.auditoriumId;
     document.getElementById('edit-Lessons-day').value = item.dayOfWeek;
     document.getElementById('edit-Lessons-time').value = item.startTime;
+    document.getElementById('edit-Lessons-semester').value = item.semesterId;
 
     const weekRadioButtons = document.querySelectorAll('input[name="edit-Lessons-week"]');
     weekRadioButtons.forEach(radio => {
@@ -74,7 +77,8 @@ function getLessonsEditFormData() {
         auditoriumId: document.getElementById('edit-Lessons-auditorium').value,
         dayOfWeek: parseInt(document.getElementById('edit-Lessons-day').value, 10),
         startTime: formatTime(document.getElementById('edit-Lessons-time').value),
-        week: weekValue
+        week: weekValue,
+        semesterId: document.getElementById('edit-Lessons-semester').value
     };
 }
 
@@ -118,6 +122,7 @@ function populateLessonsRow(row, item) {
     row.insertCell().textContent = item.auditoriumName;
     row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek);
     row.insertCell().textContent = item.week;
+    row.insertCell().textContent = item.semester;
 }
 
 
@@ -144,8 +149,13 @@ function populateSubjects(data) {
 function populateTeachers(data) {
     populateSelect('add-Lessons-teacher', data.map(teacher => ({ id: teacher.id, name: teacher.name })));
 }
+
 function populateAuditoriums(data) {
     populateSelect('add-Lessons-auditorium', data.map(auditorium => ({ id: auditorium.id, name: auditorium.name })));
+}
+
+function populateSemesters(data) {
+    populateSelect('add-Lessons-semester', data.map(semester => ({ id: semester.id, name: semester.name })));
 }
 
 function getDayOfWeekIndex(day) {

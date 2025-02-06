@@ -10,6 +10,7 @@ public class UniversityTimetableContext : DbContext
     public virtual DbSet<Teacher> Teachers { get; set; }
     public virtual DbSet<Lesson> Lessons { get; set; }
     public virtual DbSet<Auditorium> Auditoriums { get; set; }
+    public virtual DbSet<Semester> Semesters { get; set; }
 
 
     //public virtual DbSet<TeacherSubject> TeacherSubjects { get; set; }

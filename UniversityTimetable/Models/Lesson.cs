@@ -19,6 +19,7 @@ public partial class Lesson
     public Guid SubjectId { get; set; }
     public Guid TeacherId { get; set; }
     public Guid AuditoriumId { get; set; }
+    public Guid SemesterId { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
     public TimeSpan StartTime { get; set; }
     public WeekType Week { get; set; }
@@ -34,5 +35,8 @@ public partial class Lesson
 
     [ForeignKey("AuditoriumId")]
     public virtual Auditorium? Auditorium { get; set; }
+
+    [ForeignKey("SemesterId")]
+    public virtual Semester? Semester { get; set; }
 }
 

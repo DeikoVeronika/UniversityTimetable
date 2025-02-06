@@ -30,6 +30,7 @@ namespace UniversityTimetable.Controllers
                 .Include(l => l.Subject)
                 .Include(l => l.Teacher)
                 .Include(l => l.Auditorium)
+                .Include(l => l.Semester)
                 .ToListAsync();
 
             var lessonDtos = lessons.Select(lesson => new
@@ -43,6 +44,8 @@ namespace UniversityTimetable.Controllers
                 AuditoriumName = lesson.Auditorium.Name,
                 TeacherId = lesson.Teacher.Id,
                 TeacherName = lesson.Teacher.Name,
+                SemesterId = lesson.Semester.Id,
+                SemesterName = lesson.Semester.Name,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
                 Week = lesson.Week
@@ -61,6 +64,7 @@ namespace UniversityTimetable.Controllers
                 .Include(l => l.Subject)
                 .Include(l => l.Teacher)
                 .Include(l => l.Auditorium)
+                .Include(l => l.Semester)
                 .FirstOrDefaultAsync(l => l.Id == id);
 
             if (lesson == null)
@@ -75,6 +79,7 @@ namespace UniversityTimetable.Controllers
                 SubjectId = lesson.Subject.Id,
                 TeacherId = lesson.Teacher.Id,
                 AuditoriumId = lesson.Auditorium.Id,
+                SemesterId = lesson.Semester.Id,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
                 Week = lesson.Week
@@ -102,6 +107,7 @@ namespace UniversityTimetable.Controllers
             existingLesson.SubjectId = lesson.SubjectId;
             existingLesson.TeacherId = lesson.TeacherId;
             existingLesson.AuditoriumId = lesson.AuditoriumId;
+            existingLesson.SemesterId = lesson.SemesterId;
             existingLesson.DayOfWeek = lesson.DayOfWeek;
             existingLesson.StartTime = lesson.StartTime;
             existingLesson.Week = lesson.Week;
