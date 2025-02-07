@@ -4,6 +4,23 @@
     EVEN: "Парний"
 }
 
+const WEEK_DAYS = {
+    MONDAY: "Понеділок",
+    TUESDAY: "Вівторок",
+    WEDNESDAY: "Середа",
+    THURSDAY: "Четвер",
+    FRIDAY: "П'ятниця",
+    SATURDAY: "Субота"
+}
+
+const LESSON_TYPE = {
+    LECTURE: "Лекція",
+    PRACTICE: "Практика",
+    CONSULTATION: "Консультація",
+    SEMINAR: "Семінар",
+    LAB: "Лаб"
+}
+
 function getLessonsData() {
     let weekValue;
     const selectedWeek = document.querySelector('input[name="add-Lessons-week"]:checked');
@@ -19,7 +36,8 @@ function getLessonsData() {
         dayOfWeek: getDayOfWeekIndex(document.getElementById('add-Lessons-day').value),
         startTime: formatTime(document.getElementById('add-Lessons-time').value),
         week: weekValue,
-        semesterId: document.getElementById('add-Lessons-semester').value
+        semesterId: document.getElementById('add-Lessons-semester').value,
+        lessonType: parseInt(document.getElementById('add-Lessons-lessonType').value, 10)
     };
 
     return body;
@@ -33,6 +51,7 @@ async function loadAllDropdowns() {
     await loadDropdownData('/api/semesters', 'edit-Lessons-semester');
     populateDaysEdit();
     populateTimesEdit();
+    populateLessonTypesEdit();
     //populateWeeksEdit();
 }
 function setLessonsEditFormValues(item) {
@@ -43,6 +62,7 @@ function setLessonsEditFormValues(item) {
     document.getElementById('edit-Lessons-day').value = item.dayOfWeek;
     document.getElementById('edit-Lessons-time').value = item.startTime;
     document.getElementById('edit-Lessons-semester').value = item.semesterId;
+    document.getElementById('edit-Lessons-lessonType').value = item.lessonType;
 
     const weekRadioButtons = document.querySelectorAll('input[name="edit-Lessons-week"]');
     weekRadioButtons.forEach(radio => {
@@ -78,7 +98,8 @@ function getLessonsEditFormData() {
         dayOfWeek: parseInt(document.getElementById('edit-Lessons-day').value, 10),
         startTime: formatTime(document.getElementById('edit-Lessons-time').value),
         week: weekValue,
-        semesterId: document.getElementById('edit-Lessons-semester').value
+        semesterId: document.getElementById('edit-Lessons-semester').value,
+        lessonType: parseInt(document.getElementById('edit-Lessons-lessonType').value, 10)
     };
 }
 
@@ -88,29 +109,54 @@ function populateSchedule(data) {
     scheduleBody.innerHTML = "";
 
     const lessonTimes = ["08:40", "10:35", "12:20", "14:05"];
-    const dayMapping = { /*0: 6,*/ 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5 };
+    const dayMapping = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5 };
+    const mappedCurrentDay = getCurrentDayIndex(dayMapping);
 
-    lessonTimes.forEach(time => {
-        const row = document.createElement("tr");
-        row.appendChild(createTableCell(time, true));
+    highlightCurrentDay(mappedCurrentDay);
+    lessonTimes.forEach(time => createScheduleRow(time, data, scheduleBody, dayMapping, mappedCurrentDay));
+}
 
-        const lessonDivsByDay = Array.from({ length: 6 }, () => document.createElement("div"));
+function getCurrentDayIndex(dayMapping) {
+    const currentDayIndex = new Date().getDay();
+    return dayMapping[currentDayIndex];
+}
 
-        data.forEach(item => {
-            if (item.startTime.startsWith(time)) {
-                const mappedDay = dayMapping[item.dayOfWeek];
-                const lessonDiv = createLessonDiv(item);
-                lessonDivsByDay[mappedDay].appendChild(lessonDiv);
-            }
-        });
+function highlightCurrentDay(mappedCurrentDay) {
+    const scheduleThead = document.getElementById("schedule-thead").querySelector("tr");
+    const headerCells = scheduleThead.querySelectorAll("th");
 
-        lessonDivsByDay.forEach(lessonDiv => {
-            const cell = createTableCell("");
-            cell.appendChild(lessonDiv);
-            row.appendChild(cell);
-        });
+    if (mappedCurrentDay !== undefined && headerCells.length > mappedCurrentDay + 1) {
+        headerCells[mappedCurrentDay + 1].classList.add("today");
+    }
+}
 
-        scheduleBody.appendChild(row);
+function createScheduleRow(time, data, scheduleBody, dayMapping, mappedCurrentDay) {
+    const row = document.createElement("tr");
+    row.appendChild(createTableCell(time, true));
+
+    const lessonDivsByDay = Array.from({ length: 6 }, () => document.createElement("div"));
+
+    populateLessonDivs(lessonDivsByDay, data, time, dayMapping);
+
+    lessonDivsByDay.forEach((lessonDiv, index) => {
+        const cell = createTableCell("");
+        cell.appendChild(lessonDiv);
+        row.appendChild(cell);
+
+        if (index === mappedCurrentDay) {
+            cell.classList.add("today");
+        }
+    });
+
+    scheduleBody.appendChild(row);
+}
+
+function populateLessonDivs(lessonDivsByDay, data, time, dayMapping) {
+    data.forEach(item => {
+        if (item.startTime.startsWith(time)) {
+            const mappedDay = dayMapping[item.dayOfWeek];
+            lessonDivsByDay[mappedDay].appendChild(createLessonDiv(item));
+        }
     });
 }
 
@@ -123,12 +169,21 @@ function populateLessonsRow(row, item) {
     row.insertCell().textContent = getDayOfWeekString(item.dayOfWeek);
     row.insertCell().textContent = item.week;
     row.insertCell().textContent = item.semester;
+    row.insertCell().textContent = item.lessonType;
 }
 
 
 function getDayOfWeekString(dayOfWeek) {
-    return [/*'Неділя',*/ 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'][dayOfWeek];
+    return [
+        WEEK_DAYS.MONDAY,
+        WEEK_DAYS.TUESDAY,
+        WEEK_DAYS.WEDNESDAY,
+        WEEK_DAYS.THURSDAY,
+        WEEK_DAYS.FRIDAY,
+        WEEK_DAYS.SATURDAY
+    ][dayOfWeek];
 }
+
 function populateGroups(data) {
     populateSelect('add-Lessons-group', data.map(group => ({ id: group.id, name: group.name })));
 
@@ -175,24 +230,27 @@ function populateTimes(id) {
 function populateDays(id) {
     const days = [
         //{ value: 0, name: 'Неділя' },
-        { value: 1, name: 'Понеділок' },
-        { value: 2, name: 'Вівторок' },
-        { value: 3, name: 'Середа' },
-        { value: 4, name: 'Четвер' },
-        { value: 5, name: 'П\'ятниця' },
-        { value: 6, name: 'Субота' }
+        { value: 1, name: WEEK_DAYS.MONDAY },
+        { value: 2, name: WEEK_DAYS.TUESDAY },
+        { value: 3, name: WEEK_DAYS.WEDNESDAY },
+        { value: 4, name: WEEK_DAYS.THURSDAY },
+        { value: 5, name: WEEK_DAYS.FRIDAY },
+        { value: 6, name: WEEK_DAYS.SATURDAY }
     ];
     populateSelect(id, days);
 }
 
-//function populateWeeks(id) {
-//    const weeks = [
-//        { value: 0, name: WEEK_TYPE.BOTH },
-//        { value: 1, name: WEEK_TYPE.EVEN },
-//        { value: 2, name: WEEK_TYPE.ODD }
-//    ];
-//    populateSelect(id, weeks);
-//}
+function populateLessonTypes(id) {
+    const lessonTypes = [
+        { value: 0, name: LESSON_TYPE.LECTURE },
+        { value: 1, name: LESSON_TYPE.PRACTICE },
+        { value: 2, name: LESSON_TYPE.CONSULTATION },
+        { value: 3, name: LESSON_TYPE.SEMINAR },
+        { value: 4, name: LESSON_TYPE.LAB }
+    ];
+
+    populateSelect(id, lessonTypes);
+}
 
 function populateTimesCreate() {
     populateTimes('add-Lessons-time');
@@ -210,13 +268,13 @@ function populateDaysEdit() {
     populateDays('edit-Lessons-day');
 }
 
-//function populateWeeksCreate() {
-//    populateWeeks('add-Lessons-week');
-//}
+function populateLessonTypesCreate() {
+    populateLessonTypes('add-Lessons-lessonType');
+}
 
-//function populateWeeksEdit() {
-//    populateWeeks('edit-Lessons-week');
-//}
+function populateLessonTypesEdit() {
+    populateLessonTypes('edit-Lessons-lessonType');
+}
 
 function formatTime(time) {
     return time.length === 5 ? time + ":00" : time;
@@ -245,6 +303,10 @@ function createLessonDiv(item) {
     const lessonDiv = document.createElement("div");
     lessonDiv.classList.add("lesson-card");
 
+    // Додаємо клас відповідно до типу уроку
+    const lessonTypeClass = getLessonTypeClass(item.lessonType);
+    lessonDiv.classList.add(lessonTypeClass);
+
     const lessonInfo = document.createElement("div");
     lessonInfo.classList.add("lesson-info");
 
@@ -252,10 +314,24 @@ function createLessonDiv(item) {
     if (item.week === 1) weekType = WEEK_TYPE.ODD;
     else if (item.week === 2) weekType = WEEK_TYPE.EVEN;
 
+    let lessonType = LESSON_TYPE.LECTURE;
+    if (item.lessonType === 1) {
+        lessonType = LESSON_TYPE.PRACTICE
+    } else if (item.lessonType === 2) {
+        lessonType = LESSON_TYPE.CONSULTATION
+    } else if (item.lessonType === 3) {
+        lessonType = LESSON_TYPE.SEMINAR
+    } else if (item.lessonType === 4) {
+        lessonType = LESSON_TYPE.LAB
+    }
+
     lessonInfo.innerHTML = `
-        <div>
+        <div class="lesson-card-header">
             <span class="week-type">${weekType}</span>
-            <span class="auditorium-name">каб: ${item.auditoriumName}</span>
+            <div class="auditorium-lessonType">
+                <span class="auditorium-name">каб: ${item.auditoriumName}</span>
+                <span class="lessonType">${lessonType}</span>
+            </div>
         </div>
         <span class="subject-name">${item.subjectName}</span>
         <span class="teacher-name">${item.teacherName}</span>
@@ -267,7 +343,37 @@ function createLessonDiv(item) {
     return lessonDiv;
 }
 
+// Функція для отримання CSS-класу за типом уроку
+function getLessonTypeClass(lessonType) {
+    const classMap = {
+        0: "lecture-card",
+        1: "practice-card",
+        2: "consultation-card",
+        3: "seminar-card",
+        4: "lab-card"
+    };
+    return classMap[lessonType] || "default-lesson-card";
+}
 
+
+function isEvenWeek(startDate) {
+    const diffDays = Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24));
+    return (Math.floor(diffDays / 7) + 1) % 2 === 0;
+}
+
+function updateWeekHeader(startDate) {
+    document.querySelector("#schedule-thead tr th:first-child").textContent = isEvenWeek(startDate) ? WEEK_TYPE.EVEN : WEEK_TYPE.ODD;
+}
+
+// Викликаємо функцію після завантаження семестрів
+async function fetchSemestersAndSetHeader() {
+    await fetchData('Semesters', data => {
+        if (data.length > 0) {
+            const semesterStartDate = data[0].startDate; // Припустимо, що є лише один активний семестр
+            updateWeekHeader(semesterStartDate);
+        }
+    });
+}
 
 function createLessonButton(text, onClick) {
     const button = document.createElement("button");

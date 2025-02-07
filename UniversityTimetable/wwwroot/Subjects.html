@@ -21,8 +21,30 @@
             <h2>Додати предмет</h2>
             <form id="add-subject-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Subjects')">
                 <input type="text" id="add-Subjects-name" placeholder="Назва предмета" required>
-                <input type="number" id="add-Subjects-lectureHours" placeholder="Години лекцій" required>
-                <input type="number" id="add-Subjects-practicalHours" placeholder="Години практик" required>
+                <div class="form-control">
+                    <label for="add-Subjects-independentStudyHours">Лекція</label>
+                    <input type="number" id="add-Subjects-lectureHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="add-Subjects-practicalHours">Практика</label>
+                    <input type="number" id="add-Subjects-practicalHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="add-Subjects-seminarHours">Семінар</label>
+                    <input type="number" id="add-Subjects-seminarHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="add-Subjects-labHours">Лабораторна робота</label>
+                    <input type="number" id="add-Subjects-labHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="add-Subjects-consultationHours">Консультація</label>
+                    <input type="number" id="add-Subjects-consultationHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="add-Subjects-independentStudyHours">Самостійна робота</label>
+                    <input type="number" id="add-Subjects-independentStudyHours" required>
+                </div>
                 <input type="submit" value="Додати предмет">
             </form>
         </section>
@@ -32,8 +54,30 @@
             <form id="edit-subject-form" action="javascript:void(0);" onsubmit="updateEntity('Subjects')">
                 <input type="hidden" id="edit-Subjects-id">
                 <input type="text" id="edit-Subjects-name" required>
-                <input type="number" id="edit-Subjects-lectureHours" placeholder="Години лекцій" required>
-                <input type="number" id="edit-Subjects-practicalHours" placeholder="Години практик" required>
+                <div class="form-control">
+                    <label for="edit-Subjects-independentStudyHours">Лекція</label>
+                    <input type="number" id="edit-Subjects-lectureHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="edit-Subjects-practicalHours">Практика</label>
+                    <input type="number" id="edit-Subjects-practicalHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="edit-Subjects-seminarHours">Семінар</label>
+                    <input type="number" id="edit-Subjects-seminarHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="edit-Subjects-labHours">Лабораторна робота</label>
+                    <input type="number" id="edit-Subjects-labHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="edit-Subjects-consultationHours">Консультація</label>
+                    <input type="number" id="edit-Subjects-consultationHours" required>
+                </div>
+                <div class="form-control">
+                    <label for="edit-Subjects-independentStudyHours">Самостійна робота</label>
+                    <input type="number" id="edit-Subjects-independentStudyHours" required>
+                </div>
                 <button type="submit">Зберегти</button>
                 <a href="#" onclick="closeInput('Subjects')">Скасувати</a>
             </form>
@@ -45,8 +89,12 @@
                 <thead>
                     <tr class="header">
                         <th>Назва</th>
-                        <th>Години лекцій</th>
-                        <th>Години практик</th>
+                        <th>Лекції</th>
+                        <th>Практики</th>
+                        <th>Семінари</th>
+                        <th>Лабораторні</th>
+                        <th>Консультації</th>
+                        <th>Самостійна робота</th>
                         <th>Дії</th>
                     </tr>
                 </thead>

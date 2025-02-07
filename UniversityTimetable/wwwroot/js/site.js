@@ -147,6 +147,10 @@ function resetForm(entity) {
     if (entity === 'Subjects') {
         document.getElementById(`add-${entity}-lectureHours`).value = '';
         document.getElementById(`add-${entity}-practicalHours`).value = '';
+        document.getElementById(`add-${entity}-seminarHours`).value = '';
+        document.getElementById(`add-${entity}-labHours`).value = '';
+        document.getElementById(`add-${entity}-consultationHours`).value = '';
+        document.getElementById(`add-${entity}-independentStudyHours`).value = '';
     }
     if (entity === 'Semesters') {
         document.getElementById(`add-${entity}-startDate`).value = '';

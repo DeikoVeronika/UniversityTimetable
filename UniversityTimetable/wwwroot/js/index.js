@@ -1,8 +1,9 @@
-﻿let selectedGroup = ''; 
+﻿let selectedGroup = '';
 
 document.addEventListener("DOMContentLoaded", async function () {
     try {
         await Promise.all([
+            fetchSemestersAndSetHeader(),
             fetchData('Groups', populateGroups),
             fetchData('Subjects', populateSubjects),
             fetchData('Teachers', populateTeachers),
@@ -10,8 +11,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             fetchData('Semesters', populateSemesters)
         ]);
 
+        
         populateDaysCreate();
         populateTimesCreate();
+        populateLessonTypesCreate();
         document.getElementById('week-both').checked = true;
 
         fetchData('Lessons', data => {

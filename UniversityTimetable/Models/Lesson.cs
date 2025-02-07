@@ -11,6 +11,15 @@ public enum WeekType
     Even
 }
 
+public enum LessonType
+{
+    Lecture,
+    Practice,
+    Consultation,
+    Seminar,
+    Lab
+}
+
 public partial class Lesson
 {
     [Key]
@@ -23,6 +32,7 @@ public partial class Lesson
     public DayOfWeek DayOfWeek { get; set; }
     public TimeSpan StartTime { get; set; }
     public WeekType Week { get; set; }
+    public LessonType LessonType { get; set; }
 
     [ForeignKey("GroupId")]
     public virtual Group? Group { get; set; }

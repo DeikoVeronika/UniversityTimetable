@@ -49,7 +49,7 @@ a {
     box-shadow: 0px 3px 6px rgb(42 60 71 / 0.2);
     background: rgba(255, 255, 255, 0.9);
     margin: 1rem;
-    border-radius: 16px;
+    border-radius: 1.5rem 0;
     padding: 15px 30px;
 }
 
@@ -63,19 +63,41 @@ a {
 }
 
 table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: .8rem;
     width: 100%;
-    border-collapse: collapse;
     border: 1px solid #ddd;
+}
+
+table thead tr:first-child th:first-child {
+    border-top-left-radius: .8rem;
+}
+
+table thead tr:first-child th:last-child {
+    border-top-right-radius: .8rem;
+}
+
+table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: .8rem;
+}
+
+table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: .8rem;
 }
 
 th, td {
     text-align: center;
     padding: 16px 8px;
-    border-right: 1px solid #ddd;
+}
+
+th:not(:last-child),
+td:not(:last-child) {
+    border-right: 1px solid #ddd; 
 }
 
 th:first-child, td:first-child {
-    text-align: left;
+    text-align: center;
 }
 
 tr:nth-child(even) {
@@ -94,7 +116,7 @@ input[type="text"] {
 
 button, a, input[type="submit"] {
     padding: 5px 10px;
-    margin-right: 5px;
+    /*margin-right: 5px;*/
     cursor: pointer;
 }
 
@@ -104,6 +126,7 @@ select {
     height: 35px;
     margin: 5px 0;
     padding-left: 5px;
+    border-radius: 10px 0 0 0;
 }
 
 .form-control {
@@ -113,6 +136,13 @@ select {
 
 .form-control label{
     margin-bottom: 4px;
+}
+
+.form-header-line {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .edit-container {
@@ -135,15 +165,23 @@ select {
 }
 
 
+.week-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+
 /* Start Schedule Page */
 .lesson-card {
+    /*min-width: 200px;*/
     text-align: start;
     margin: 5px;
     padding: 14px;
-    border: 1px solid rgba(101, 181, 246, 0.2);
-    border-radius: 12px;
-    box-shadow: 0px 4px 16px rgba(42, 60, 71, 0.03);
-    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 1.5rem 0;
+    box-shadow: 0 2px 16px rgba(42, 60, 71, 0.03);
+    /*background: rgba(255, 255, 255, 0.9);*/
 }
 
 .lesson-card:hover {
@@ -151,7 +189,31 @@ select {
     box-shadow: 0px 4px 16px rgba(42, 60, 71, 0.11);
 }
 
-.lesson-card div {
+.default-lesson-card {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.lecture-card {
+    background: rgb(209 243 199 / 90%);
+}
+
+.practice-card {
+    background: rgb(199 232 243 / 0.9);
+}
+
+.consultation-card {
+    background: rgb(255 246 173 / 0.9);
+}
+
+.seminar-card {
+    background: rgb(238 226 255 / 0.9);
+}
+
+.lab-card {
+    background: rgb(255 233 251 / 0.9);
+}
+
+.lesson-card .lesson-card-header {
     display: flex;
     gap: 0.6rem;
     justify-content: space-between;
@@ -169,10 +231,8 @@ select {
     font-size: 0.875rem;
     font-weight: 600;
     padding: 4px 14px;
-    border-radius: 14px;
-    color: #fff;
-    /*background-color: #1ca2fb;*/
-    background-color: #81d3f6;
+    border-radius: 1rem 0;
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .lesson-card .auditorium-name {
@@ -192,6 +252,11 @@ select {
     line-height: 16px;
 }
 
+.lesson-card .lessonType {
+    font-size: 0.725rem;
+    font-weight: 500;
+}
+
 .start-lesson-time {
     text-align: center;
     color: #fff;
@@ -199,8 +264,14 @@ select {
     /*background-color: #1371e3;*/
     background-color: #00b3ff;
     padding: 8px 16px;
-    border-radius: 20px;
+    border-radius: 1rem 0;
     font-size: 1.05rem;
+}
+
+.lesson-card .auditorium-lessonType {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
 }
 
 #schedule-table th:not(:first-child),
@@ -210,17 +281,21 @@ select {
     word-wrap: break-word;
 }
 
-#schedule-table th:first-child,
+#schedule-table td:not(:first-child) {
+    height: 200px
+}
+
+/*#schedule-table th:first-child,
 #schedule-table td:first-child {
     width: 60px;
-}
+}*/
 
 #schedule-body tr:nth-child(even) {
     background-color: #fff;
 }
 
 #schedule-thead th {
-    padding: 32px 0;
+    padding: 2rem 12px;
 }
 
 #schedule-body td {
@@ -234,10 +309,14 @@ select {
     border-radius: 16px;
 }
 
-.form-content h2 {
+.form-content h2,
+.form-content h3 {
     text-align: center;
     font-weight: 600;
     font-size: 1.5rem;
+}
+
+.form-content h2 {
     margin-bottom: 1.5rem;
 }
 
@@ -256,20 +335,26 @@ select {
     padding: 10px 32px;
     background: none;
     border: 1px solid #00b3ff;
-    width: 50%;
-    border-radius: 55px;
+    width: 80%;
+    border-radius: 1rem 0;
     transition: all 0.2s ease-in-out;
-}
-
-.edit-form-btns {
-    width: 50%;
-    display: flex;
 }
 
 .form-content button:hover {
     background-color: #00b3ff;
     color: white;
 }
+
+#editLessons .edit-form-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#editLessons .edit-form-btns button {
+    width: 100%;
+}
+
 
 .edit-form-btns #delete-lesson-button {
     border: 1px solid #a50606;
@@ -279,9 +364,15 @@ select {
     color: white
 }
 
+#editLessons {
+    box-shadow: -2px 0px 9px rgb(42 60 71 / 30%);
+    margin-bottom: 0;
+    border: none;
+}
+
 .form-control-groups {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 80%;
 }
 
@@ -292,8 +383,21 @@ select {
     justify-content: center;
 }
 
-.week-radio-group {
+.schedule-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    gap: 4px;
+}
+
+
+#schedule-thead {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#schedule-thead th:nth-child(n+2) {
+    width: calc(100% / 6); /* 100% / 6 днів, без першого стовпчика */
+}
+
+th.today  {
+    color: #00b3ff;
 }

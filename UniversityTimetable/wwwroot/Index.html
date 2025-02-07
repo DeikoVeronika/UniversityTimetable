@@ -70,72 +70,17 @@
                             <label for="add-Lessons-semester">Семестер</label>
                             <select id="add-Lessons-semester" required></select>
                         </div>
+                        <div class="form-control">
+                            <label for="add-Lessons-lessonType">Тип заняття</label>
+                            <select id="add-Lessons-lessonType" required></select>
+                        </div>
                     </div>
                 </div>
                 <button type="submit">Створити</button>
             </form>
         </section>
 
-        <section>
-            <div id="editLessons" class="edit-container form-content">
-                <a class="close" href="#" onclick="closeInput('Lessons')">&times;</a>
-                <form id="edit-Lessons-form" action="javascript:void(0);" onsubmit="updateEntity('Lessons')">
-                    <h2>Редагування уроку</h2>
-                    <input type="hidden" id="edit-Lessons-id">
-                    <div class="form-control-groups">
-                        <div class="form-control-group">
-                            <div class="form-control">
-                                <label for="edit-Lessons-group">Група</label>
-                                <select id="edit-Lessons-group" required></select>
-                            </div>
-                            <div class="form-control">
-                                <label for="edit-Lessons-auditorium">Аудиторія</label>
-                                <select id="edit-Lessons-auditorium" required></select>
-                            </div>
-                            <div class="form-control">
-                                <label for="edit-Lessons-subject">Предмет</label>
-                                <select id="edit-Lessons-subject" required></select>
-                            </div>
-                        </div>
-                        <div class="form-control-group">
-                            <div class="form-control">
-                                <label for="edit-Lessons-teacher">Викладач</label>
-                                <select id="edit-Lessons-teacher" required></select>
-                            </div>
-                            <div class="form-control">
-                                <label for="edit-Lessons-day">День</label>
-                                <select id="edit-Lessons-day" required></select>
-                            </div>
-                            <div class="form-control">
-                                <label for="edit-Lessons-time">Час початку пари</label>
-                                <select id="edit-Lessons-time" required></select>
-                            </div>
-                        </div>
-                        <div class="form-control-group">
-                            <div class="form-control week-radio-group">
-                                <label>
-                                    <input type="radio" name="edit-Lessons-week" value="0" id="week-both" checked required> Н/П
-                                </label>
-                                <label>
-                                    <input type="radio" name="edit-Lessons-week" value="1" id="week-odd"> Непарний
-                                </label>
-                                <label>
-                                    <input type="radio" name="edit-Lessons-week" value="2" id="week-even"> Парний
-                                </label>
-                            </div>
-                            <div class="form-control">
-                                <label for="edit-Lessons-semester">Семестер</label>
-                                <select id="edit-Lessons-semester" required></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="edit-form-btns">
-                        <button type="button" id="delete-lesson-button" class="delete-btn">Видалити</button>
-                        <button type="submit">Зберегти зміни</button>
-                    </div>
-                </form>
-            </div>
-        </section>
+        
 
         <!--<section>
             <label for="group-filter">Фільтр за групою:</label>
@@ -190,23 +135,81 @@
 
             <div id="schedule-table">
                 <h2>Розклад занять</h2>
-                <table>
-                    <thead id="schedule-thead">
-                        <tr>
-                            <th></th>
-                            <th>Понеділок</th>
-                            <th>Вівторок</th>
-                            <th>Середа</th>
-                            <th>Четвер</th>
-                            <th>П’ятниця</th>
-                            <th>Субота</th>
-                            <!--<th>Неділя</th>-->
-                        </tr>
-                    </thead>
-                    <tbody id="schedule-body">
-                        <!-- Заповнюється скриптом -->
-                    </tbody>
-                </table>
+                <div class="schedule-wrapper">
+                    <table>
+                        <thead id="schedule-thead">
+                            <tr>
+                                <th></th>
+                                <th>Понеділок</th>
+                                <th>Вівторок</th>
+                                <th>Середа</th>
+                                <th>Четвер</th>
+                                <th>П’ятниця</th>
+                                <th>Субота</th>
+                                <!--<th>Неділя</th>-->
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body">
+                            <!-- Заповнюється скриптом -->
+                        </tbody>
+                    </table>
+                    <div id="editLessons" class="edit-container form-content">
+                        <form id="edit-Lessons-form" action="javascript:void(0);" onsubmit="updateEntity('Lessons')">
+                            <div class="form-header-line">
+                                <h3>Редагування уроку</h3>
+                                <a class="close" href="#" onclick="closeInput('Lessons')">&times;</a>
+                            </div>
+                            <input type="hidden" id="edit-Lessons-id">
+                            <div class="form-control">
+                                <label for="edit-Lessons-group">Група</label>
+                                <select id="edit-Lessons-group" required></select>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-auditorium">Аудиторія</label>
+                                <select id="edit-Lessons-auditorium" required></select>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-subject">Предмет</label>
+                                <select id="edit-Lessons-subject" required></select>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-teacher">Викладач</label>
+                                <select id="edit-Lessons-teacher" required></select>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-day">День</label>
+                                <select id="edit-Lessons-day" required></select>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-time">Час початку пари</label>
+                                <select id="edit-Lessons-time" required></select>
+                            </div>
+                            <div class="form-control week-radio-group">
+                                <label>
+                                    <input type="radio" name="edit-Lessons-week" value="0" id="week-both" checked required> Н/П
+                                </label>
+                                <label>
+                                    <input type="radio" name="edit-Lessons-week" value="1" id="week-odd"> Непарний
+                                </label>
+                                <label>
+                                    <input type="radio" name="edit-Lessons-week" value="2" id="week-even"> Парний
+                                </label>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-semester">Семестер</label>
+                                <select id="edit-Lessons-semester" required></select>
+                            </div>
+                            <div class="form-control">
+                                <label for="edit-Lessons-lessonType">Тип заняття</label>
+                                <select id="edit-Lessons-lessonType" required></select>
+                            </div>
+                            <div class="edit-form-btns">
+                                <button type="submit">Зберегти зміни</button>
+                                <button type="button" id="delete-lesson-button" class="delete-btn">Видалити</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </section>
     </div>

@@ -48,7 +48,8 @@ namespace UniversityTimetable.Controllers
                 SemesterName = lesson.Semester.Name,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
-                Week = lesson.Week
+                Week = lesson.Week,
+                LessonType = lesson.LessonType
             }).ToList();
 
             return Ok(lessonDtos);
@@ -82,7 +83,8 @@ namespace UniversityTimetable.Controllers
                 SemesterId = lesson.Semester.Id,
                 DayOfWeek = lesson.DayOfWeek,
                 StartTime = lesson.StartTime.ToString(@"hh\:mm"),
-                Week = lesson.Week
+                Week = lesson.Week,
+                LessonType = lesson.LessonType
             });
         }
 
@@ -111,6 +113,7 @@ namespace UniversityTimetable.Controllers
             existingLesson.DayOfWeek = lesson.DayOfWeek;
             existingLesson.StartTime = lesson.StartTime;
             existingLesson.Week = lesson.Week;
+            existingLesson.LessonType = lesson.LessonType;
 
             try
             {
