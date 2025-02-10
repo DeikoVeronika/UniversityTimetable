@@ -17,4 +17,10 @@ public partial class Semester
     [Column(TypeName = "date")]
     public DateTime EndDate { get; set; }
     public virtual ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+
+    public bool IsActive()
+    {
+        DateTime today = DateTime.Now;
+        return today >= StartDate && today <= EndDate;
+    }
 }

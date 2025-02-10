@@ -22,9 +22,20 @@ namespace UniversityTimetable.Controllers
 
         // GET: api/Semesters
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Semester>>> GetSemesters()
+        public async Task<ActionResult<IEnumerable<object>>> GetSemesters()
         {
-            return await _context.Semesters.ToListAsync();
+            var semesters = await _context.Semesters.ToListAsync();
+
+            var semestersWithIsActive = semesters.Select(s => new
+            {
+                s.Id,
+                s.Name,
+                s.StartDate,
+                s.EndDate,
+                isActive = s.IsActive() // Викликаємо метод IsActive() для кожного семестру
+            });
+
+            return Ok(semestersWithIsActive); // Повертаємо результат у форматі JSON
         }
 
         // GET: api/Semesters/5

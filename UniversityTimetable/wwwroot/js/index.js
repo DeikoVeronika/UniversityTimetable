@@ -1,9 +1,12 @@
-﻿let selectedGroup = '';
+﻿let lessons = [];
+
+let selectedGroup = '';
+let selectedSemester = '';
 
 document.addEventListener("DOMContentLoaded", async function () {
     try {
         await Promise.all([
-            fetchSemestersAndSetHeader(),
+            fetchSemesters(),
             fetchData('Groups', populateGroups),
             fetchData('Subjects', populateSubjects),
             fetchData('Teachers', populateTeachers),
@@ -19,18 +22,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         fetchData('Lessons', data => {
             lessons = data;
-            displayEntities('Lessons', lessons);
-            console.log("Завантажені уроки:", lessons);
+            filterData();
 
+            // Фільтрація по групі
             document.getElementById('group-filter').addEventListener('change', function () {
                 selectedGroup = this.value;
-                const filteredData = selectedGroup ? lessons.filter(lesson => lesson.groupName === selectedGroup) : lessons;
-                displayEntities('Lessons', filteredData);
+                filterData();
+            });
+
+            // Фільтрація по семестру
+            document.getElementById('semester-filter').addEventListener('change', function () {
+                selectedSemester = this.value;
+                filterData();
             });
         });
-
 
     } catch (error) {
         console.error("Error loading data:", error);
     }
 });
+

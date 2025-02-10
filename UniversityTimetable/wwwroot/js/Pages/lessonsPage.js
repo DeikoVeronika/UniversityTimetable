@@ -174,14 +174,30 @@ function populateLessonsRow(row, item) {
 
 
 function getDayOfWeekString(dayOfWeek) {
-    return [
-        WEEK_DAYS.MONDAY,
-        WEEK_DAYS.TUESDAY,
-        WEEK_DAYS.WEDNESDAY,
-        WEEK_DAYS.THURSDAY,
-        WEEK_DAYS.FRIDAY,
-        WEEK_DAYS.SATURDAY
-    ][dayOfWeek];
+    return
+    //[
+    //    WEEK_DAYS.MONDAY,
+    //    WEEK_DAYS.TUESDAY,
+    //    WEEK_DAYS.WEDNESDAY,
+    //    WEEK_DAYS.THURSDAY,
+    //    WEEK_DAYS.FRIDAY,
+    //    WEEK_DAYS.SATURDAY
+    //]
+    WEEK_DAYS[dayOfWeek];
+}
+
+function filterData() {
+    let filteredData = lessons;
+
+    if (selectedGroup) {
+        filteredData = filteredData.filter(lesson => lesson.groupName === selectedGroup);
+    }
+
+    if (selectedSemester) {
+        filteredData = filteredData.filter(lesson => lesson.semesterName === selectedSemester);
+    }
+
+    displayEntities('Lessons', filteredData);
 }
 
 function populateGroups(data) {
@@ -197,6 +213,34 @@ function populateGroups(data) {
         groupFilter.appendChild(option);
     });
 }
+
+function populateSemesters(data) {
+    populateSelect('add-Lessons-semester', data.map(semester => ({ id: semester.id, name: semester.name })));
+
+    const semesterFilter = document.getElementById('semester-filter');
+    semesterFilter.innerHTML = '';
+
+    data.forEach(semester => {
+        const semesterDiv = document.createElement('div');
+        semesterDiv.classList.add('semester-filter-item');
+        semesterDiv.textContent = semester.name;
+
+        semesterDiv.addEventListener('click', () => {
+            selectedSemester = semester.name;  
+            filterData(); 
+
+            removeActiveSemesterClass();
+            addActiveSemesterClass(semesterDiv);
+        });
+
+        semesterFilter.appendChild(semesterDiv);
+
+        if (semester.name === selectedSemester) {
+            addActiveSemesterClass(semesterDiv);
+        }
+    });
+}
+
 function populateSubjects(data) {
     populateSelect('add-Lessons-subject', data.map(subject => ({ id: subject.id, name: subject.name })));
 }
@@ -209,9 +253,9 @@ function populateAuditoriums(data) {
     populateSelect('add-Lessons-auditorium', data.map(auditorium => ({ id: auditorium.id, name: auditorium.name })));
 }
 
-function populateSemesters(data) {
-    populateSelect('add-Lessons-semester', data.map(semester => ({ id: semester.id, name: semester.name })));
-}
+//function populateSemesters(data) {
+//    populateSelect('add-Lessons-semester', data.map(semester => ({ id: semester.id, name: semester.name })));
+//}
 
 function getDayOfWeekIndex(day) {
     return parseInt(day, 10);
@@ -288,13 +332,7 @@ function createTableCell(content, isFirstColumn = false) {
         span.classList.add("start-lesson-time");
         span.textContent = content;
         cell.appendChild(span);
-    } // else {
-    //    if (typeof content === "string") {
-    //        cell.innerHTML = content; 
-    //    } else if (content instanceof Node) {
-    //        cell.appendChild(content); 
-    //    }
-    //}
+    } 
 
     return cell;
 }
@@ -365,14 +403,33 @@ function updateWeekHeader(startDate) {
     document.querySelector("#schedule-thead tr th:first-child").textContent = isEvenWeek(startDate) ? WEEK_TYPE.EVEN : WEEK_TYPE.ODD;
 }
 
-// Викликаємо функцію після завантаження семестрів
-async function fetchSemestersAndSetHeader() {
+
+async function fetchSemesters() {
     await fetchData('Semesters', data => {
-        if (data.length > 0) {
-            const semesterStartDate = data[0].startDate; // Припустимо, що є лише один активний семестр
-            updateWeekHeader(semesterStartDate);
+        const activeSemester = data.find(semester => semester.isActive);
+
+        if (activeSemester) {
+            updateWeekHeader(activeSemester.startDate);
+            selectedSemester = activeSemester.name;
+        } else if (data.length > 0) {
+            selectedSemester = data[0].name;
+        } 
+
+        populateSemesters(data);
+
+        if (selectedSemester) {
+            filterData();
         }
     });
+}
+
+
+function addActiveSemesterClass(element) {
+    element.classList.add('active-semester');
+}
+function removeActiveSemesterClass() {
+    const allSemesterDivs = document.querySelectorAll('.semester-filter-item');
+    allSemesterDivs.forEach(div => div.classList.remove('active-semester'));
 }
 
 function createLessonButton(text, onClick) {

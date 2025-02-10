@@ -176,13 +176,24 @@ async function updateEntityData(entity) {
     fetchData(entity, data => {
         if (entity === 'Lessons') {
             lessons = data;
-            const filteredData = selectedGroup ? lessons.filter(lesson => lesson.groupName === selectedGroup) : lessons;
+
+            let filteredData = lessons;
+
+            if (selectedGroup) {
+                filteredData = filteredData.filter(lesson => lesson.groupName === selectedGroup);
+            }
+
+            if (selectedSemester) {
+                filteredData = filteredData.filter(lesson => lesson.semesterName === selectedSemester);
+            }
+
             displayEntities(entity, filteredData);
         } else {
             displayEntities(entity, data);
         }
     });
 }
+
 
 // Entity Display
 function displayEntities(entity, data) {

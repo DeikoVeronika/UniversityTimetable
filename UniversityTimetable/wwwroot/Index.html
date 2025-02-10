@@ -133,26 +133,30 @@
                 <option value="">Всі групи</option>
             </select>
 
+            <div id="semester-filter"></div>
+
+
             <div id="schedule-table">
                 <h2>Розклад занять</h2>
                 <div class="schedule-wrapper">
-                    <table>
-                        <thead id="schedule-thead">
-                            <tr>
-                                <th></th>
-                                <th>Понеділок</th>
-                                <th>Вівторок</th>
-                                <th>Середа</th>
-                                <th>Четвер</th>
-                                <th>П’ятниця</th>
-                                <th>Субота</th>
-                                <!--<th>Неділя</th>-->
-                            </tr>
-                        </thead>
-                        <tbody id="schedule-body">
-                            <!-- Заповнюється скриптом -->
-                        </tbody>
-                    </table>
+                    <div class="schedule-wrapper-table">
+                        <table>
+                            <thead id="schedule-thead">
+                                <tr>
+                                    <th></th>
+                                    <th>Понеділок</th>
+                                    <th>Вівторок</th>
+                                    <th>Середа</th>
+                                    <th>Четвер</th>
+                                    <th>П’ятниця</th>
+                                    <th>Субота</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-body">
+                                <!-- Заповнюється скриптом -->
+                            </tbody>
+                        </table>
+                    </div>
                     <div id="editLessons" class="edit-container form-content">
                         <form id="edit-Lessons-form" action="javascript:void(0);" onsubmit="updateEntity('Lessons')">
                             <div class="form-header-line">
