@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/site.css">
     <title>Керування уроками</title>
     <style>
@@ -13,9 +13,9 @@
     <nav class="navbar">
         <ul>
             <li class="nav-element"><a href="Index.html">Головна</a></li>
-            <li class="nav-element"><a href="Subjects.html">Предмети</a></li>
+            <li class="nav-element"><a href="Subjects.html">Дисципліни</a></li>
             <li class="nav-element"><a href="Groups.html">Групи</a></li>
-            <li class="nav-element"><a href="Teachers.html">Вчителі</a></li>
+            <li class="nav-element"><a href="Teachers.html">Викладачі</a></li>
             <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
             <li class="nav-element"><a href="Semesters.html">Семестри</a></li>
         </ul>
@@ -128,12 +128,13 @@
         </section>-->
 
         <section>
-            <label for="group-filter">Фільтр за групою:</label>
-            <select id="group-filter">
-                <option value="">Всі групи</option>
-            </select>
-
-            <div id="semester-filter"></div>
+            <div class="filters">
+                <div>
+                    <label for="group-filter">Фільтр за групою:</label>
+                    <select id="group-filter"></select>
+                </div>
+                <div id="semester-filter"></div>
+            </div>
 
 
             <div id="schedule-table">
@@ -153,7 +154,6 @@
                                 </tr>
                             </thead>
                             <tbody id="schedule-body">
-                                <!-- Заповнюється скриптом -->
                             </tbody>
                         </table>
                     </div>

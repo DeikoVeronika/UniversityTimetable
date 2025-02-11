@@ -43,7 +43,7 @@ function getLessonsData() {
     return body;
 }
 
-async function loadAllDropdowns() {
+async function loadLessonDropdowns() {
     await loadDropdownData('/api/groups', 'edit-Lessons-group');
     await loadDropdownData('/api/subjects', 'edit-Lessons-subject');
     await loadDropdownData('/api/teachers', 'edit-Lessons-teacher');

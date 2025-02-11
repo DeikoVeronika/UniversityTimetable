@@ -35,9 +35,9 @@
     <nav class="navbar">
         <ul>
             <li class="nav-element"><a href="Index.html">Головна</a></li>
-            <li class="nav-element"><a href="Subjects.html">Предмети</a></li>
+            <li class="nav-element"><a href="Subjects.html">Дисципліни</a></li>
             <li class="nav-element"><a href="Groups.html">Групи</a></li>
-            <li class="nav-element"><a href="Teachers.html">Вчителі</a></li>
+            <li class="nav-element"><a href="Teachers.html">Викладачі</a></li>
             <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
             <li class="nav-element"><a href="Semesters.html">Семестри</a></li>
         </ul>
@@ -55,8 +55,13 @@
                     <div id="add-group">
                         <h2>Створити групу</h2>
                         <form id="add-group-form" action="javascript:void(0);" method="POST" onsubmit="addEntity('Groups')">
-                            <input type="text" id="add-Groups-name" placeholder="Назва групи" required>
-                            <input type="submit" value="Створити групу">
+                            <select id="add-Groups-year" required></select>
+                            <select id="add-Groups-program" required></select>
+                            <button type="button" id="add-group-name-button">+</button>
+                            <div id="group-names-container">
+                                <input type="text" class="group-name-input" placeholder="Назва групи" required>
+                            </div>
+                            <input type="submit" value="Створити групи">
                         </form>
                     </div>
                 </div>
@@ -68,6 +73,8 @@
                 <h3>Редагування інформації про групу</h3>
                 <form id="edit-group-form" action="javascript:void(0);" onsubmit="updateEntity('Groups')">
                     <input type="hidden" id="edit-Groups-id">
+                    <select id="edit-Groups-year" required></select>
+                    <select id="edit-Groups-program" required></select>
                     <input type="text" id="edit-Groups-name" required>
                     <button type="submit">Зберегти</button>
                     <a href="#" onclick="closeInput('Groups')">Скасувати</a>
@@ -81,6 +88,8 @@
                 <thead>
                     <tr class="header">
                         <th>Назва</th>
+                        <th>Курс</th>
+                        <th>Освітня програма</th>
                         <th>Дії</th>
                     </tr>
                 </thead>

@@ -12,9 +12,9 @@ html {
 }
 
 @media (min-width: 768px) {
-    html {
+/*    html {
         font-size: 16px;
-    }
+    }*/
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
@@ -392,6 +392,7 @@ select {
 }
 
 .schedule-wrapper-table {
+    width: 100%;
     overflow-x: auto;
 }
 
@@ -436,4 +437,46 @@ select {
     box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px;
 }
 
+.filters {
+    display: flex;
+    justify-content: space-around;
+}
 
+
+
+/*@media (min-width: 300px) {
+    .content {
+        margin: 1rem;
+    }
+    .form-content {
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    .form-content form {
+        display: block;
+        width: 100%;
+    }
+
+    .form-control-groups {
+        display: block;
+        width: auto;
+    }
+
+    .form-control-group {
+        display: block;
+    }
+
+    select {
+        width: auto;
+    }
+
+    .form-content button {
+        width: 100%;
+    }
+
+    .form-control-group div {
+        margin-bottom: 5px;
+    }
+}*/

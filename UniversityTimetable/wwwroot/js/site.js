@@ -18,19 +18,21 @@ async function fetchData(entity, callback) {
 
 // Entity Add
 async function addEntity(entity) {
-    const body = createEntityBody(entity);
+    const bodies = createEntityBody(entity);
 
     try {
-        const response = await fetch(`api/${entity}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
+        for (const body of bodies) {
+            const response = await fetch(`api/${entity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
 
-        if (!response.ok) {
-            await handleResponseError(response);
+            if (!response.ok) {
+                await handleResponseError(response);
+            }
         }
 
         await updateEntityData(entity);
@@ -43,19 +45,19 @@ async function addEntity(entity) {
 
 function createEntityBody(entity) {
     if (entity === 'Lessons') {
-        return getLessonsData();
+        return [getLessonsData()];
     } else if (entity === 'Subjects') {
-        return getSubjectsData();
+        return [getSubjectsData()];
     } else if (entity === 'Groups') {
         return getGroupsData();
     } else if (entity === 'Teachers') {
-        return getTeachersData();
+        return [getTeachersData()];
     } else if (entity === 'Auditoriums') {
-        return getAuditoriumsData();
+        return [getAuditoriumsData()];
     } else if (entity === 'Semesters') {
-        return getSemestersData();
+        return [getSemestersData()];
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -82,11 +84,12 @@ async function displayEditForm(entity, item) {
     document.getElementById(`edit-${entity}-id`).value = item.id;
 
     if (entity === 'Lessons') {
-        await loadAllDropdowns();
+        await loadLessonDropdowns();
         setLessonsEditFormValues(item);
     } else if (entity === 'Subjects') {
         setSubjectsEditFormValues(item);
     } else if (entity === 'Groups') {
+        await loadGroupDropdowns();
         setGroupsEditFormValues(item);
     } else if (entity === 'Teachers') {
         setTeachersEditFormValues(item);
@@ -143,18 +146,31 @@ function closeInput(entity) {
 }
 
 function resetForm(entity) {
-    document.getElementById(`add-${entity}-name`).value = '';
-    if (entity === 'Subjects') {
-        document.getElementById(`add-${entity}-lectureHours`).value = '';
-        document.getElementById(`add-${entity}-practicalHours`).value = '';
-        document.getElementById(`add-${entity}-seminarHours`).value = '';
-        document.getElementById(`add-${entity}-labHours`).value = '';
-        document.getElementById(`add-${entity}-consultationHours`).value = '';
-        document.getElementById(`add-${entity}-independentStudyHours`).value = '';
-    }
-    if (entity === 'Semesters') {
-        document.getElementById(`add-${entity}-startDate`).value = '';
-        document.getElementById(`add-${entity}-endDate`).value = '';
+    if (entity === 'Groups') {
+        const inputs = Array.from(document.getElementsByClassName('group-name-input'));
+        for (let i = 1; i < inputs.length; i++) {
+            inputs[i].remove();
+        }
+
+        if (inputs.length > 0) {
+            inputs[0].value = '';
+        }
+    } else {
+        document.getElementById(`add-${entity}-name`).value = '';
+
+        if (entity === 'Subjects') {
+            document.getElementById(`add-${entity}-lectureHours`).value = '';
+            document.getElementById(`add-${entity}-practicalHours`).value = '';
+            document.getElementById(`add-${entity}-seminarHours`).value = '';
+            document.getElementById(`add-${entity}-labHours`).value = '';
+            document.getElementById(`add-${entity}-consultationHours`).value = '';
+            document.getElementById(`add-${entity}-independentStudyHours`).value = '';
+        }
+
+        if (entity === 'Semesters') {
+            document.getElementById(`add-${entity}-startDate`).value = '';
+            document.getElementById(`add-${entity}-endDate`).value = '';
+        }
     }
 }
 
