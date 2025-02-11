@@ -169,5 +169,63 @@ namespace UniversityTimetable.Controllers
         {
             return _context.Lessons.Any(e => e.Id == id);
         }
+
+        [HttpGet("IsAuditoriumAvailable")]
+        public async Task<bool> IsAuditoriumAvailable(Guid auditoriumId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId)
+        {
+            return await IsResourceAvailable(
+                auditoriumId: auditoriumId,
+                dayOfWeek: dayOfWeek,
+                startTime: startTime,
+                week: week,
+                lessonId: lessonId,
+                semesterId: semesterId,
+                isTeacherCheck: false
+            );
+        }
+
+        [HttpGet("IsTeacherAvailable")]
+        public async Task<bool> IsTeacherAvailable(Guid teacherId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId)
+        {
+            return await IsResourceAvailable(
+                auditoriumId: teacherId,
+                dayOfWeek: dayOfWeek,
+                startTime: startTime,
+                week: week,
+                lessonId: lessonId,
+                semesterId: semesterId,
+                isTeacherCheck: true
+            );
+        }
+
+        private async Task<bool> IsResourceAvailable(Guid auditoriumId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId, bool isTeacherCheck)
+        {
+            var timeSpan = TimeSpan.Parse(startTime);
+            var query = _context.Lessons.AsQueryable();
+
+            if (isTeacherCheck)
+            {
+                query = query.Where(l => l.TeacherId == auditoriumId);
+            }
+            else
+            {
+                query = query.Where(l => l.AuditoriumId == auditoriumId);
+            }
+
+            return !await query
+                .AnyAsync(l =>
+                    l.SemesterId == semesterId &&
+                    l.DayOfWeek == dayOfWeek &&
+                    l.StartTime == timeSpan &&
+                    (lessonId == null || l.Id != lessonId) &&
+                    (
+                        (l.Week == WeekType.Both) ||
+                        (l.Week == week) ||
+                        (week == WeekType.Both && (l.Week == WeekType.Even || l.Week == WeekType.Odd))
+                    )
+                );
+        }
+
+
     }
 }

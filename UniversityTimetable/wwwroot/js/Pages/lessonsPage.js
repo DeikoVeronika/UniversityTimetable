@@ -438,3 +438,85 @@ function createLessonButton(text, onClick) {
     button.onclick = onClick;
     return button;
 }
+
+async function checkAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, teacherId) {
+    try {
+        const formattedTime = formatTime(startTime);
+
+        const isAuditoriumAvailable = await checkAuditoriumAvailability(auditoriumId, dayOfWeek, formattedTime, week, lessonId, semesterId);
+        if (!isAuditoriumAvailable) return false;
+
+        const isTeacherAvailable = await checkTeacherAvailability(teacherId, dayOfWeek, formattedTime, week, lessonId, semesterId);
+        if (!isTeacherAvailable) return false;
+
+        return true;
+    } catch (error) {
+        console.error('Error checking availability:', error);
+        return false;
+    }
+}
+
+async function checkAuditoriumAvailability(auditoriumId, dayOfWeek, formattedTime, week, lessonId, semesterId) {
+    const auditoriumResponse = await fetch(`api/lessons/IsAuditoriumAvailable?auditoriumId=${auditoriumId}&dayOfWeek=${dayOfWeek}&startTime=${formattedTime}&week=${week}&lessonId=${lessonId || ''}&semesterId=${semesterId}`);
+    if (!auditoriumResponse.ok) {
+        throw new Error('Network response was not ok');
+    }
+    const isAvailable = await auditoriumResponse.json();
+
+    if (!isAvailable) {
+        showAlert('Аудиторія недоступна у цей час.');
+    }
+    return isAvailable;
+}
+
+async function checkTeacherAvailability(teacherId, dayOfWeek, formattedTime, week, lessonId, semesterId) {
+    const teacherResponse = await fetch(`api/lessons/IsTeacherAvailable?teacherId=${teacherId}&dayOfWeek=${dayOfWeek}&startTime=${formattedTime}&week=${week}&lessonId=${lessonId || ''}&semesterId=${semesterId}`);
+    if (!teacherResponse.ok) {
+        throw new Error('Network response was not ok');
+    }
+    const isAvailable = await teacherResponse.json();
+
+    if (!isAvailable) {
+        showAlert('Викладач недоступний у цей час.');
+    }
+    return isAvailable;
+}
+
+function showAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Помилка',
+        text: message,
+    });
+}
+
+
+async function checkLessonAvailability({ startTime, week, auditoriumId, dayOfWeek, id = null, semesterId, teacherId }) {
+    const lessonId = id;
+
+    const isAvailable = await checkAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, teacherId);
+    if (!isAvailable) {
+        throw new Error('Auditorium or teacher not available');
+    }
+}
+
+async function updateLessonEntity(body) {
+    const formData = await getLessonsEditFormData();
+    const lessonId = document.getElementById('edit-Lessons-id').value;
+
+    const isAvailable = await checkAvailability(
+        formData.auditoriumId,
+        formData.dayOfWeek,
+        formData.startTime,
+        formData.week,
+        lessonId,
+        formData.semesterId,
+        formData.teacherId
+    );
+
+    if (!isAvailable) {
+        throw new Error('Auditorium or teacher not available');
+    }
+
+    Object.assign(body, formData);
+}

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Додавання обробника для кнопки "+"
         const addButton = document.getElementById('add-group-name-button');
+        const deleteButton = document.getElementById('delete-group-name-button');
         const container = document.getElementById('group-names-container');
 
         addButton.addEventListener('click', function () {
@@ -16,6 +17,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             newInput.placeholder = 'Назва групи';
             newInput.required = true;
             container.appendChild(newInput);
+        });
+
+        deleteButton.addEventListener('click', function () {
+            const inputs = Array.from(document.getElementsByClassName('group-name-input'));
+            inputs[inputs.length - 1].remove();
         });
 
     } catch (error) {

@@ -41,3 +41,8 @@ function populateSubjectsRow(row, item) {
     row.insertCell().textContent = item.consultationHours;
     row.insertCell().textContent = item.independentStudyHours;
 }
+
+function updateSubjectsEntity(body) {
+    const formData = getSubjectsEditFormData();
+    Object.assign(body, formData);
+}

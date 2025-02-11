@@ -22,24 +22,29 @@ async function addEntity(entity) {
 
     try {
         for (const body of bodies) {
-            const response = await fetch(`api/${entity}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                await handleResponseError(response);
+            if (entity === 'Lessons') {
+                await checkLessonAvailability(body);
             }
+
+            await sendCreateRequest(entity, body);
         }
 
         await updateEntityData(entity);
-
         resetForm(entity);
     } catch (error) {
         console.error(`Unable to add ${entity}.`, error);
+    }
+}
+
+async function sendCreateRequest(entity, body) {
+    const response = await fetch(`api/${entity}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        await handleResponseError(response);
     }
 }
 
@@ -107,37 +112,33 @@ async function updateEntity(entity) {
     const entityId = document.getElementById(`edit-${entity}-id`).value;
     let body = { id: entityId };
 
-    if (entity === 'Lessons') {
-        Object.assign(body, getLessonsEditFormData());
-    } else if (entity === 'Subjects') {
-        Object.assign(body, getSubjectsEditFormData());
-    } else if (entity === 'Groups') {
-        Object.assign(body, getGroupsEditFormData());
-    } else if (entity === 'Teachers') {
-        Object.assign(body, getTeachersEditFormData());
-    } else if (entity === 'Auditoriums') {
-        Object.assign(body, getAuditoriumsEditFormData());
-    } else if (entity === 'Semesters') {
-        Object.assign(body, getSemestersEditFormData());
-    }
-
     try {
-        const response = await fetch(`/api/${entity}/${entityId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
-
-        if (!response.ok) {
-            await handleResponseError(response);
+        if (entity === 'Lessons') {
+            await updateLessonEntity(body);
+        } else if (entity === 'Subjects') {
+            updateSubjectsEntity(body);
+        } else {
+            // Інші перевірки для редагування сутностей
         }
 
+        await sendUpdateRequest(entity, entityId, body);
         await updateEntityData(entity);
-
         closeInput(entity);
+
     } catch (error) {
         console.error(`Unable to update ${entity}.`, error);
-        alert(`Помилка оновлення ${entity}. Перевірте консоль.`);
+    }
+}
+
+async function sendUpdateRequest(entity, entityId, body) {
+    const response = await fetch(`/api/${entity}/${entityId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        await handleResponseError(response);
     }
 }
 
