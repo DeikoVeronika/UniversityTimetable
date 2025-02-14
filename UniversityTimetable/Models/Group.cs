@@ -13,9 +13,9 @@ public enum Year
 
 public enum Program
 {
-    Informatics,
     AppliedMath,
     SystemAnalysis,
+    Informatics,
     SoftwareEngineering
 }
 

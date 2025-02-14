@@ -61,9 +61,9 @@ function populateYears(id) {
 
 function populatePrograms(id) {
     const programs = [
-        { value: 0, name: PROGRAMS.INFORMATICS },
-        { value: 1, name: PROGRAMS.APPLIED_MATH },
-        { value: 2, name: PROGRAMS.SYSTEM_ANALYSIS },
+        { value: 0, name: PROGRAMS.APPLIED_MATH },
+        { value: 1, name: PROGRAMS.SYSTEM_ANALYSIS },
+        { value: 2, name: PROGRAMS.INFORMATICS },
         { value: 3, name: PROGRAMS.SOFTWARE_ENGINEERING }
     ];
 

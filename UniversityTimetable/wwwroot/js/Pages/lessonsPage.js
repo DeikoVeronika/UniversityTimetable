@@ -439,19 +439,38 @@ function createLessonButton(text, onClick) {
     return button;
 }
 
-async function checkAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, teacherId) {
+async function checkAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, teacherId, groupId) {
     try {
         const formattedTime = formatTime(startTime);
-
         const isAuditoriumAvailable = await checkAuditoriumAvailability(auditoriumId, dayOfWeek, formattedTime, week, lessonId, semesterId);
-        if (!isAuditoriumAvailable) return false;
-
         const isTeacherAvailable = await checkTeacherAvailability(teacherId, dayOfWeek, formattedTime, week, lessonId, semesterId);
-        if (!isTeacherAvailable) return false;
+        const isGroupAvailable = await checkGroupAvailability(groupId, dayOfWeek, formattedTime, week, lessonId, semesterId);
+
+        //додати можливість додавати групу до аудиторії і викладача, навіть якщо він вже зайнятий
+
+        if (!isTeacherAvailable && !isGroupAvailable) {
+            showAlert('Викладач уже займається з групою у обраний час');
+            return false;
+        }
+
+        if (!isAuditoriumAvailable) {
+            showAlert('Обрана аудиторія вже зайнята іншим викладачем.');
+            return false;
+        }
+
+        if (!isTeacherAvailable) {
+            showAlert('Викладач вже викладає в іншій аудиторії у цей час.');
+            return false;
+        }
+
+        if (!isGroupAvailable) {
+            showAlert('У групи заняття в іншій аудиторії у цей час.');
+            return false;
+        }
 
         return true;
     } catch (error) {
-        console.error('Error checking availability:', error);
+        console.error('Помилка при перевірці доступності:', error);
         return false;
     }
 }
@@ -459,27 +478,25 @@ async function checkAvailability(auditoriumId, dayOfWeek, startTime, week, lesso
 async function checkAuditoriumAvailability(auditoriumId, dayOfWeek, formattedTime, week, lessonId, semesterId) {
     const auditoriumResponse = await fetch(`api/lessons/IsAuditoriumAvailable?auditoriumId=${auditoriumId}&dayOfWeek=${dayOfWeek}&startTime=${formattedTime}&week=${week}&lessonId=${lessonId || ''}&semesterId=${semesterId}`);
     if (!auditoriumResponse.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Помилка мережі');
     }
-    const isAvailable = await auditoriumResponse.json();
-
-    if (!isAvailable) {
-        showAlert('Аудиторія недоступна у цей час.');
-    }
-    return isAvailable;
+    return await auditoriumResponse.json();
 }
 
 async function checkTeacherAvailability(teacherId, dayOfWeek, formattedTime, week, lessonId, semesterId) {
     const teacherResponse = await fetch(`api/lessons/IsTeacherAvailable?teacherId=${teacherId}&dayOfWeek=${dayOfWeek}&startTime=${formattedTime}&week=${week}&lessonId=${lessonId || ''}&semesterId=${semesterId}`);
     if (!teacherResponse.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Помилка мережі');
     }
-    const isAvailable = await teacherResponse.json();
+    return await teacherResponse.json();
+}
 
-    if (!isAvailable) {
-        showAlert('Викладач недоступний у цей час.');
+async function checkGroupAvailability(groupId, dayOfWeek, formattedTime, week, lessonId, semesterId) {
+    const groupResponse = await fetch(`api/lessons/IsGroupAvailable?groupId=${groupId}&dayOfWeek=${dayOfWeek}&startTime=${formattedTime}&week=${week}&lessonId=${lessonId || ''}&semesterId=${semesterId}`);
+    if (!groupResponse.ok) {
+        throw new Error('Помилка мережі');
     }
-    return isAvailable;
+    return await groupResponse.json();
 }
 
 function showAlert(message) {
@@ -490,13 +507,12 @@ function showAlert(message) {
     });
 }
 
-
-async function checkLessonAvailability({ startTime, week, auditoriumId, dayOfWeek, id = null, semesterId, teacherId }) {
+async function checkLessonAvailability({ startTime, week, auditoriumId, dayOfWeek, id = null, semesterId, teacherId, groupId }) {
     const lessonId = id;
 
-    const isAvailable = await checkAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, teacherId);
+    const isAvailable = await checkAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, teacherId, groupId);
     if (!isAvailable) {
-        throw new Error('Auditorium or teacher not available');
+        throw new Error('Аудиторія, викладач або група недоступні');
     }
 }
 
@@ -511,11 +527,12 @@ async function updateLessonEntity(body) {
         formData.week,
         lessonId,
         formData.semesterId,
-        formData.teacherId
+        formData.teacherId,
+        formData.groupId
     );
 
     if (!isAvailable) {
-        throw new Error('Auditorium or teacher not available');
+        throw new Error('Аудиторія, викладач або група недоступні');
     }
 
     Object.assign(body, formData);

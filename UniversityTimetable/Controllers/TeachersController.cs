@@ -22,9 +22,10 @@ namespace UniversityTimetable.Controllers
 
         // GET: api/Teachers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachers()
+        public async Task<IActionResult> GetTeachers()
         {
-            return await _context.Teachers.ToListAsync();
+            var teachers = await _context.Teachers.ToListAsync();
+            return Ok(teachers);
         }
 
         // GET: api/Teachers/5

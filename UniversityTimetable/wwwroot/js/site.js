@@ -116,9 +116,15 @@ async function updateEntity(entity) {
         if (entity === 'Lessons') {
             await updateLessonEntity(body);
         } else if (entity === 'Subjects') {
-            updateSubjectsEntity(body);
-        } else {
-            // Інші перевірки для редагування сутностей
+            Object.assign(body, getSubjectsEditFormData());
+        } else if (entity === 'Groups') {
+            Object.assign(body, getGroupsEditFormData());
+        } else if (entity === 'Teachers') {
+            Object.assign(body, getTeachersEditFormData());
+        } else if (entity === 'Auditoriums') {
+            Object.assign(body, getAuditoriumsEditFormData());
+        } else if (entity === 'Semesters') {
+            Object.assign(body, getSemestersEditFormData());
         }
 
         await sendUpdateRequest(entity, entityId, body);

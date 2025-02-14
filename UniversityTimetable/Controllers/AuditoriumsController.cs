@@ -22,9 +22,10 @@ namespace UniversityTimetable.Controllers
 
         // GET: api/Auditoriums
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Auditorium>>> GetAuditoriums()
+        public async Task<IActionResult> GetAuditoriums()
         {
-            return await _context.Auditoriums.ToListAsync();
+            var auditoriums = await _context.Auditoriums.ToListAsync();
+            return Ok(auditoriums);
         }
 
         // GET: api/Auditoriums/5

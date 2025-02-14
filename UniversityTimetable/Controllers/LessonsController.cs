@@ -173,43 +173,37 @@ namespace UniversityTimetable.Controllers
         [HttpGet("IsAuditoriumAvailable")]
         public async Task<bool> IsAuditoriumAvailable(Guid auditoriumId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId)
         {
-            return await IsResourceAvailable(
-                auditoriumId: auditoriumId,
-                dayOfWeek: dayOfWeek,
-                startTime: startTime,
-                week: week,
-                lessonId: lessonId,
-                semesterId: semesterId,
-                isTeacherCheck: false
-            );
+            return await CheckResourceAvailability(auditoriumId, dayOfWeek, startTime, week, lessonId, semesterId, false);
         }
 
         [HttpGet("IsTeacherAvailable")]
         public async Task<bool> IsTeacherAvailable(Guid teacherId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId)
         {
-            return await IsResourceAvailable(
-                auditoriumId: teacherId,
-                dayOfWeek: dayOfWeek,
-                startTime: startTime,
-                week: week,
-                lessonId: lessonId,
-                semesterId: semesterId,
-                isTeacherCheck: true
-            );
+            return await CheckResourceAvailability(teacherId, dayOfWeek, startTime, week, lessonId, semesterId, true);
         }
 
-        private async Task<bool> IsResourceAvailable(Guid auditoriumId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId, bool isTeacherCheck)
+        [HttpGet("IsGroupAvailable")]
+        public async Task<bool> IsGroupAvailable(Guid groupId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId)
+        {
+            return await CheckResourceAvailability(groupId, dayOfWeek, startTime, week, lessonId, semesterId, false, true);
+        }
+
+        private async Task<bool> CheckResourceAvailability(Guid resourceId, DayOfWeek dayOfWeek, string startTime, WeekType week, Guid? lessonId, Guid semesterId, bool isTeacherCheck, bool isGroupCheck = false)
         {
             var timeSpan = TimeSpan.Parse(startTime);
             var query = _context.Lessons.AsQueryable();
 
             if (isTeacherCheck)
             {
-                query = query.Where(l => l.TeacherId == auditoriumId);
+                query = query.Where(l => l.TeacherId == resourceId);
+            }
+            else if (isGroupCheck)
+            {
+                query = query.Where(l => l.GroupId == resourceId);
             }
             else
             {
-                query = query.Where(l => l.AuditoriumId == auditoriumId);
+                query = query.Where(l => l.AuditoriumId == resourceId);
             }
 
             return !await query
@@ -225,6 +219,7 @@ namespace UniversityTimetable.Controllers
                     )
                 );
         }
+
 
 
     }

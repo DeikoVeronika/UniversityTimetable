@@ -22,9 +22,19 @@ namespace UniversityTimetable.Controllers
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+        public async Task<IActionResult> GetGroups()
         {
-            return await _context.Groups.ToListAsync();
+            var groups = await _context.Groups
+                .Select(g => new
+                {
+                    g.Id,
+                    g.Name,
+                    Year = (int)g.Year,
+                    Program = (int)g.Program
+                })
+                .ToListAsync();
+
+            return Ok(groups);
         }
 
         // GET: api/Groups/5
