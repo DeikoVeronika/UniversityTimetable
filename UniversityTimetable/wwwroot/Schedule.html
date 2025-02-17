@@ -3,335 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule</title>
-    <style>
-        .hidden {
-            display: none;
-        }
-
-        .tabs button, .course-tabs button {
-            margin-right: 10px;
-        }
-
-        .lesson-block {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-
-        .add-lesson-btn, .remove-lesson-btn {
-            cursor: pointer;
-            color: green;
-        }
-
-        .remove-lesson-btn {
-            color: red;
-        }
-
-        /*start schedule table*/
-        /*.schedule-table-container {
-            display: flex;
-        }
-        .week-day {
-            display: flex;
-            gap: 3rem;
-            margin-bottom: 1rem;
-        }
-        .week-day-name {
-            width: 50px;
-        }
-
-        .lesson {
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            padding: 2rem;
-            border: 1px solid #000;
-        }
-
-        .groups {
-            display: flex;
-        }
-
-        .year-header {
-            text-align: center;
-            margin: 0;
-            padding: 0.1rem 1rem;
-        }
-
-        .groups .group {
-            text-align: center;
-            margin: 0;
-            padding: 0.1rem 1rem;
-        }
-
-        .program-header {
-            text-align: center;
-            margin: 0;
-            padding: 0.1rem 1rem;
-        }*/
-        table, td, th {
-            border: 1px solid #595959;
-            border-collapse: collapse;
-        }
-
-        td, th {
-            text-align: center;
-            padding: 3px;
-            width: 30px;
-            height: 25px;
-        }
-
-        th {
-            background: #f0e6cc;
-        }
-
-        .even {
-            background: #fbf8f0;
-        }
-
-        .odd {
-            background: #fefcf9;
-        }
-    </style>
+    <link rel="stylesheet" href="css/site.css">
+    <title>Створення графіку</title>
 </head>
 <body>
+    <div class="create-schedule-wrapper">
+        <nav class="navbar">
+            <ul>
+                <li class="nav-element"><a href="Index.html">Головна</a></li>
+                <li class="nav-element"><a href="Subjects.html">Дисципліни</a></li>
+                <li class="nav-element"><a href="Groups.html">Групи</a></li>
+                <li class="nav-element"><a href="Teachers.html">Викладачі</a></li>
+                <li class="nav-element"><a href="Auditoriums.html">Аудиторії</a></li>
+                <li class="nav-element"><a href="Semesters.html">Семестри</a></li>
+                <li class="nav-element"><a href="Schedule.html">Семестри</a></li>
+            </ul>
+        </nav> 
 
-    <section id="schedule-table">
-        <table>
-            <tbody id="table-body">
-                <!-- Тут буде згенерована таблиця -->
-            </tbody>
-        </table>
-    </section>
-
-
-
-    <!--<section>
-        <div class="schedule-table-container">
-            <div class="week-days">
-                <div class="week-day">
-                    <div class="week-day-name">Понеділок</div>
-                    <div class="time">
-                        <div class="lesson">
-                            <span>8.40-9.25</span>
-                            <span>9.30-10.15</span>
-                        </div>
-                        <div class="lesson">
-                            <span>10.35-11.20</span>
-                            <span>11.25-12.10</span>
-                        </div>
-                        <div class="lesson">
-                            <span>12.20-13.05</span>
-                            <span>13.10-13.55</span>
-                        </div>
-                        <div class="lesson">
-                            <span>14.05-14.50</span>
-                            <span>14.55-15.40</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="week-day">
-                    <div class="week-day-name">Вівторок</div>
-                    <div class="time">
-                        <div class="lesson">
-                            <span>8.40-9.25</span>
-                            <span>9.30-10.15</span>
-                        </div>
-                        <div class="lesson">
-                            <span>10.35-11.20</span>
-                            <span>11.25-12.10</span>
-                        </div>
-                        <div class="lesson">
-                            <span>12.20-13.05</span>
-                            <span>13.10-13.55</span>
-                        </div>
-                        <div class="lesson">
-                            <span>14.05-14.50</span>
-                            <span>14.55-15.40</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="week-day">
-                    <div class="week-day-name">Середа</div>
-                    <div class="time">
-                        <div class="lesson">
-                            <span>8.40-9.25</span>
-                            <span>9.30-10.15</span>
-                        </div>
-                        <div class="lesson">
-                            <span>10.35-11.20</span>
-                            <span>11.25-12.10</span>
-                        </div>
-                        <div class="lesson">
-                            <span>12.20-13.05</span>
-                            <span>13.10-13.55</span>
-                        </div>
-                        <div class="lesson">
-                            <span>14.05-14.50</span>
-                            <span>14.55-15.40</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="week-day">
-                    <div class="week-day-name">Четвер</div>
-                    <div class="time">
-                        <div class="lesson">
-                            <span>8.40-9.25</span>
-                            <span>9.30-10.15</span>
-                        </div>
-                        <div class="lesson">
-                            <span>10.35-11.20</span>
-                            <span>11.25-12.10</span>
-                        </div>
-                        <div class="lesson">
-                            <span>12.20-13.05</span>
-                            <span>13.10-13.55</span>
-                        </div>
-                        <div class="lesson">
-                            <span>14.05-14.50</span>
-                            <span>14.55-15.40</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="week-day">
-                    <div class="week-day-name">П'ятниця</div>
-                    <div class="time">
-                        <div class="lesson">
-                            <span>8.40-9.25</span>
-                            <span>9.30-10.15</span>
-                        </div>
-                        <div class="lesson">
-                            <span>10.35-11.20</span>
-                            <span>11.25-12.10</span>
-                        </div>
-                        <div class="lesson">
-                            <span>12.20-13.05</span>
-                            <span>13.10-13.55</span>
-                        </div>
-                        <div class="lesson">
-                            <span>14.05-14.50</span>
-                            <span>14.55-15.40</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="week-day">
-                    <div class="week-day-name">Субота</div>
-                    <div class="time">
-                        <div class="lesson">
-                            <span>8.40-9.25</span>
-                            <span>9.30-10.15</span>
-                        </div>
-                        <div class="lesson">
-                            <span>10.35-11.20</span>
-                            <span>11.25-12.10</span>
-                        </div>
-                        <div class="lesson">
-                            <span>12.20-13.05</span>
-                            <span>13.10-13.55</span>
-                        </div>
-                        <div class="lesson">
-                            <span>14.05-14.50</span>
-                            <span>14.55-15.40</span>
-                        </div>
-                    </div>
+        <section id="schedule-table-create">
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p id="modal-info"></p>
+                    <div id="modal-selects"></div>
+                    <button id="save-lesson">Зберегти</button>
                 </div>
             </div>
 
-            <div class="year-schedule">
-                <h1 class="year-header">1 курс</h1>
-                <div class="programs">
-                    <div class="program">
-                        <div class="groups">
-                            <div class="group">
-                                <h2>k-17</h2>
-                            </div>
-                            <div class="group">
-                                <h2>k-18</h2>
-                            </div>
-                        </div>
-                        <h3 class="program-header">Інформатика</h3>
-                    </div>
+            <table>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </section>
+
+        <div class="content">
+            <section>
+                <h1>Загальна форма створення розкладу</h1>
+                <div class="course-tabs">
+                    <button onclick="showCourse(1)">1 курс</button>
+                    <button onclick="showCourse(2)">2 курс</button>
+                    <button onclick="showCourse(3)">3 курс</button>
+                    <button onclick="showCourse(4)">4 курс</button>
                 </div>
-            </div>
-            <div class="year-schedule">
-                <h1 class="year-header">1 курс</h1>
-                <div class="programs">
-                    <div class="program">
-                        <div class="groups">
-                            <div class="group">
-                                <h2>k-17</h2>
-                            </div>
-                            <div class="group">
-                                <h2>k-18</h2>
-                            </div>
-                        </div>
-                        <h3 class="program-header">Інформатика</h3>
-                    </div>
+
+                <div class="tabs">
+                    <button onclick="showDay(1)">Понеділок</button>
+                    <button onclick="showDay(2)">Вівторок</button>
+                    <button onclick="showDay(3)">Середа</button>
+                    <button onclick="showDay(4)">Четвер</button>
+                    <button onclick="showDay(5)">П'ятниця</button>
+                    <button onclick="showDay(6)">Субота</button>
                 </div>
-            </div>
-            <div class="year-schedule">
-                <h1 class="year-header">1 курс</h1>
-                <div class="programs">
-                    <div class="program">
-                        <div class="groups">
-                            <div class="group">
-                                <h2>k-17</h2>
-                            </div>
-                            <div class="group">
-                                <h2>k-18</h2>
-                            </div>
-                        </div>
-                        <h3 class="program-header">Інформатика</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="year-schedule">
-                <h1 class="year-header">1 курс</h1>
-                <div class="programs">
-                    <div class="program">
-                        <div class="groups">
-                            <div class="group">
-                                <h2>k-17</h2>
-                            </div>
-                            <div class="group">
-                                <h2>k-18</h2>
-                            </div>
-                        </div>
-                        <h3 class="program-header">Інформатика</h3>
-                    </div>
-                </div>
-            </div>
+
+                <div id="schedule-container"></div>
+                <button id="submit-schedule">Зберегти</button>
+            </section>
         </div>
-    </section>-->
-
-    <section>
-        <h1>Create Schedule</h1>
-
-        <div class="course-tabs">
-            <button onclick="showCourse(1)">1st Year</button>
-            <button onclick="showCourse(2)">2nd Year</button>
-            <button onclick="showCourse(3)">3rd Year</button>
-            <button onclick="showCourse(4)">4th Year</button>
-        </div>
-
-        <div class="tabs">
-            <button onclick="showDay(1)">Monday</button>
-            <button onclick="showDay(2)">Tuesday</button>
-            <button onclick="showDay(3)">Wednesday</button>
-            <button onclick="showDay(4)">Thursday</button>
-            <button onclick="showDay(5)">Friday</button>
-            <button onclick="showDay(6)">Saturday</button>
-        </div>
-
-        <div id="schedule-container"></div>
-        <button id="submit-schedule">Save Schedule</button>
-    </section>
+    </div>
     <script src="js/Pages/schedulePage.js"></script>
 </body>
 </html>

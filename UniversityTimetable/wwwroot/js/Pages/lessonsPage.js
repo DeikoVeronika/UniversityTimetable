@@ -104,7 +104,7 @@ function getLessonsEditFormData() {
 }
 
 
-function populateSchedule(data) {
+function populateLessons(data) {
     const scheduleBody = document.getElementById("schedule-body");
     scheduleBody.innerHTML = "";
 
@@ -174,16 +174,7 @@ function populateLessonsRow(row, item) {
 
 
 function getDayOfWeekString(dayOfWeek) {
-    return
-    //[
-    //    WEEK_DAYS.MONDAY,
-    //    WEEK_DAYS.TUESDAY,
-    //    WEEK_DAYS.WEDNESDAY,
-    //    WEEK_DAYS.THURSDAY,
-    //    WEEK_DAYS.FRIDAY,
-    //    WEEK_DAYS.SATURDAY
-    //]
-    WEEK_DAYS[dayOfWeek];
+    return WEEK_DAYS[dayOfWeek];
 }
 
 function filterData() {

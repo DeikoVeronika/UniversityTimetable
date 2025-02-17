@@ -9,132 +9,46 @@ const PROGRAM_TRANSLATIONS = {
 
 let selectedCourse = 1;
 let selectedDay = 1;
+let isSelecting = false;
+let selectedCells = [];
+let lastEnteredCell = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    generateTable();
+document.addEventListener("DOMContentLoaded", async () => {
+    await generateTable();
+    initializeModal();
     generateSchedule();
 });
 
-function addLesson(time, btn) {
-    const lessonDiv = btn.closest(".lesson-block");
-    const newLessonDiv = lessonDiv.cloneNode(true);
-    newLessonDiv.querySelector(".add-lesson-btn").remove();
-    newLessonDiv.querySelector(".remove-lesson-btn").classList.remove("hidden");
-
-    resetLessonInputs(newLessonDiv);
-    lessonDiv.parentNode.insertBefore(newLessonDiv, lessonDiv.nextSibling);
-}
-
-function removeLesson(btn) {
-    btn.closest(".lesson-block").remove();
-}
-
-function resetLessonInputs(lessonDiv) {
-    lessonDiv.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
-    lessonDiv.querySelectorAll(".group-checkbox").forEach(checkbox => checkbox.checked = false);
-}
-
-function showDay(dayId) {
-    selectedDay = dayId;
-    hideAll(`#course-${selectedCourse} > div`);
-    show(`#day-${dayId}-course-${selectedCourse}`);
-}
-
-function showCourse(courseId) {
-    selectedCourse = courseId;
-    hideAll("#schedule-container > div");
-    show(`#course-${courseId}`);
-    showDay(selectedDay);
-}
-
-function hideAll(selector) {
-    document.querySelectorAll(selector).forEach(el => el.classList.add("hidden"));
-}
-
-function show(selector) {
-    document.querySelector(selector).classList.remove("hidden");
-}
-
-function createSelect(defaultText, options) {
-    return `<select><option value="">${defaultText}</option>${options.map(opt => `<option value="${opt.id}">${opt.name}</option>`).join('')}</select>`;
-}
-
+// Main Functions
 async function generateTable() {
     const tableBody = document.getElementById("table-body");
-    const [groups, programs] = await Promise.all([
-        fetch("/api/groups").then(res => res.json()),
-        fetch("/api/enums/program").then(res => res.json())
-    ]);
-
+    const [groups, programs] = await fetchData();
     const groupsByYearAndProgram = groupDataByYearAndProgram(groups);
     const sortedYears = Object.keys(groupsByYearAndProgram).sort((a, b) => a - b);
-
     tableBody.innerHTML = generateTableHTML(sortedYears, groupsByYearAndProgram, programs);
 }
 
-function groupDataByYearAndProgram(groups) {
-    const result = {};
-    groups.forEach(group => {
-        result[group.year] = result[group.year] || {};
-        result[group.year][group.program] = result[group.year][group.program] || [];
-
-        result[group.year][group.program].push(group);
-
-        result[group.year][group.program].sort((a, b) => a.name.localeCompare(b.name, "uk"));
-    });
-    return result;
+async function fetchData() {
+    return Promise.all([
+        fetch("/api/groups").then(res => res.json()),
+        fetch("/api/enums/program").then(res => res.json())
+    ]);
 }
 
+function createLessonTypeSelect() {
+    const lessonTypes = [
+        { value: "Lecture", text: "Лекція" },
+        { value: "Practice", text: "Практика" },
+        { value: "Consultation", text: "Консультація" },
+        { value: "Seminar", text: "Семінар" },
+        { value: "Lab", text: "Лабораторна" }
+    ];
 
-function generateTableHTML(sortedYears, groupsByYearAndProgram, programs) {
-    let tableHTML = `<tr><td colspan="2" rowspan="3"></td>`; // Об'єднання верхнього лівого кута
-
-    // Заголовки курсів
-    tableHTML += sortedYears.map(year => {
-        const totalGroups = Object.values(groupsByYearAndProgram[year]).flat().length;
-        return `<td colspan="${totalGroups}">${parseInt(year) + 1} курс</td>`;
-    }).join('');
-    tableHTML += `</tr><tr>`; // Закриття першого рядка
-
-    // Заголовки груп
-    tableHTML += sortedYears.map(year =>
-        Object.values(groupsByYearAndProgram[year]).map(programGroups =>
-            programGroups.map(group => `<td>${group.name}</td>`).join("")
-        ).join("")
-    ).join('');
-    tableHTML += `</tr><tr>`; // Закриття другого рядка
-
-    // Заголовки програм
-    tableHTML += sortedYears.map(year =>
-        Object.entries(groupsByYearAndProgram[year]).map(([programId, programGroups]) => {
-            const programName = programs[programId];
-            const translatedProgram = PROGRAM_TRANSLATIONS[programName] || "Невідома програма";
-            return `<td colspan="${programGroups.length}">${translatedProgram}</td>`;
-        }).join("")
-    ).join('');
-    tableHTML += `</tr>`;
-
-    // Генерація розкладу
-    tableHTML += DAYS_OF_WEEK.map(day =>
-        `<tr><td rowspan="${TIME_SLOTS.length}">${day}</td><td>${TIME_SLOTS[0]}</td>` +
-        sortedYears.map(year =>
-            Object.values(groupsByYearAndProgram[year]).map(programGroups =>
-                "<td></td>".repeat(programGroups.length)
-            ).join("")
-        ).join("") +
-        `</tr>` +
-        TIME_SLOTS.slice(1).map(time =>
-            `<tr><td>${time}</td>` +
-            sortedYears.map(year =>
-                Object.values(groupsByYearAndProgram[year]).map(programGroups =>
-                    "<td></td>".repeat(programGroups.length)
-                ).join("")
-            ).join("") +
-            `</tr>`
-        ).join("")
-    ).join("");
-
-    return tableHTML;
+    return `
+        <select id="lesson-type">
+            ${lessonTypes.map(type => `<option value="${type.value}">${type.text}</option>`).join("")}
+        </select>
+    `;
 }
 
 async function generateSchedule() {
@@ -165,6 +79,258 @@ async function generateSchedule() {
 
     showCourse(1);
     showDay(selectedDay);
+}
+
+// Modal Initialization
+function initializeModal() {
+    const modal = document.getElementById("modal");
+    const modalInfo = document.getElementById("modal-info");
+    const closeModal = document.querySelector(".close");
+    const saveLesson = document.getElementById("save-lesson");
+
+    document.querySelectorAll(".schedule-cell").forEach(cell => {
+        cell.addEventListener("mousedown", (event) => startSelection(event, cell));
+        cell.addEventListener("mouseenter", (event) => handleMouseEnter(event, cell));
+        cell.addEventListener("mouseup", () => endSelection(modal, modalInfo, saveLesson));
+    });
+
+    closeModal.addEventListener("click", () => closeModalWindow(modal));
+    window.addEventListener("mouseup", () => { isSelecting = false; });
+}
+
+// Lesson Management
+function addLesson(time, btn) {
+    const lessonDiv = btn.closest(".lesson-block");
+    const newLessonDiv = lessonDiv.cloneNode(true);
+    newLessonDiv.querySelector(".add-lesson-btn").remove();
+    newLessonDiv.querySelector(".remove-lesson-btn").classList.remove("hidden");
+    resetLessonInputs(newLessonDiv);
+    lessonDiv.parentNode.insertBefore(newLessonDiv, lessonDiv.nextSibling);
+}
+
+function removeLesson(btn) {
+    btn.closest(".lesson-block").remove();
+}
+
+function resetLessonInputs(lessonDiv) {
+    lessonDiv.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+    lessonDiv.querySelectorAll(".group-checkbox").forEach(checkbox => checkbox.checked = false);
+}
+
+// Day and Course Display
+function showDay(dayId) {
+    selectedDay = dayId;
+    hideAll(`#course-${selectedCourse} > div`);
+    show(`#day-${dayId}-course-${selectedCourse}`);
+}
+
+function showCourse(courseId) {
+    selectedCourse = courseId;
+    hideAll("#schedule-container > div");
+    show(`#course-${courseId}`);
+    showDay(selectedDay);
+}
+
+function hideAll(selector) {
+    document.querySelectorAll(selector).forEach(el => el.classList.add("hidden"));
+}
+
+function show(selector) {
+    document.querySelector(selector).classList.remove("hidden");
+}
+
+// Selection Handling
+function startSelection(event, cell) {
+    if (event.button !== 0) return; 
+    isSelecting = true;
+    selectedCells = [cell];
+    lastEnteredCell = cell;
+    updateCellHighlight();
+}
+
+function handleMouseEnter(event, cell) {
+    if (!isSelecting) return;
+
+    const cellIndex = selectedCells.indexOf(cell);
+    const lastIndex = selectedCells.indexOf(lastEnteredCell);
+
+    if (cellIndex === -1) {
+        selectedCells.push(cell);
+    } else if (cellIndex < lastIndex) {
+        selectedCells.pop();
+    }
+
+    lastEnteredCell = cell;
+    updateCellHighlight();
+}
+
+function endSelection(modal, modalInfo, saveLesson) {
+    isSelecting = false;
+    if (selectedCells.length === 0) return;
+
+    const uniqueDays = new Set();
+    const uniqueTimes = new Set();
+    const uniqueGroups = new Set();
+
+    selectedCells.forEach(cell => {
+        uniqueDays.add(cell.getAttribute("data-day"));
+        uniqueTimes.add(cell.getAttribute("data-time"));
+        uniqueGroups.add(cell.getAttribute("data-group"));
+    });
+
+    if (uniqueDays.size !== 1 || uniqueTimes.size !== 1) {
+        alert("Оберіть лише клітинки одного часу та дня.");
+        clearSelection();
+        return;
+    }
+
+    const day = [...uniqueDays][0];
+    const time = [...uniqueTimes][0];
+    const groups = [...uniqueGroups].join(", ");
+
+    modal.style.display = "block";
+    modalInfo.innerHTML = `<strong>${day}, ${time}</strong><br>Групи: ${groups}`;
+    loadModalOptions(saveLesson);
+}
+
+async function loadModalOptions(saveLesson) {
+    const apiEndpoints = ["/api/subjects", "/api/teachers", "/api/auditoriums"];
+    try {
+        const [subjects, teachers, auditoriums] = await Promise.all(
+            apiEndpoints.map(url => fetch(url).then(res => res.ok ? res.json() : Promise.reject(`Помилка запиту: ${url}`)))
+        );
+
+        const modalSelects = document.getElementById("modal-selects");
+        modalSelects.innerHTML = `
+            <div class="selects">
+                <div class="subjects">${createSelect('Оберіть предмет', subjects)}</div>
+                <div class="teachers">${createSelect('Оберіть викладача', teachers)}</div>
+                <div class="auditoriums">${createSelect('Оберіть аудиторію', auditoriums)}</div>
+                <div class="lesson-type">
+                    ${createLessonTypeSelect()}
+                </div>
+            </div>
+            <div class="week">
+                <label><input type="radio" name="week-type" value="Both" checked> Обидва</label>
+                <label><input type="radio" name="week-type" value="Odd"> Непарний</label>
+                <label><input type="radio" name="week-type" value="Even"> Парний</label>
+            </div>
+        `;
+
+        saveLesson.onclick = () => saveSelection();
+    } catch (error) {
+        console.error("Помилка при отриманні даних:", error);
+    }
+}
+
+function saveSelection() {
+    const selectedSubject = document.querySelector(".subjects select").value;
+    const selectedTeacher = document.querySelector(".teachers select").value;
+    const selectedAuditorium = document.querySelector(".auditoriums select").value;
+
+    selectedCells.forEach(cell => {
+        cell.textContent = `${selectedSubject}, ${selectedTeacher}, ${selectedAuditorium}`;
+    });
+
+    closeModalWindow(document.getElementById("modal"));
+}
+
+// Highlighting Functions
+function updateCellHighlight() {
+    document.querySelectorAll(".schedule-cell").forEach(cell => {
+        cell.classList.toggle("highlight", selectedCells.includes(cell));
+    });
+}
+
+function clearSelection() {
+    selectedCells = [];
+    updateCellHighlight();
+}
+
+function closeModalWindow(modal) {
+    modal.style.display = "none";
+    clearSelection(); 
+}
+
+// Table Generation Functions
+function generateTableHTML(sortedYears, groupsByYearAndProgram, programs) {
+    return `
+        <tr>
+            <td colspan="2" rowspan="3"></td>
+            ${generateYearHeaders(sortedYears, groupsByYearAndProgram)}
+        </tr>
+        <tr>
+            ${generateGroupHeaders(sortedYears, groupsByYearAndProgram)}
+        </tr>
+        <tr>
+            ${generateProgramHeaders(sortedYears, groupsByYearAndProgram, programs)}
+        </tr>
+        ${generateTableRows(sortedYears, groupsByYearAndProgram)}
+    `;
+}
+
+function generateYearHeaders(sortedYears, groupsByYearAndProgram) {
+    return sortedYears.map(year => {
+        const totalGroups = Object.values(groupsByYearAndProgram[year]).flat().length;
+        return `<td colspan="${totalGroups}">${parseInt(year) + 1} курс</td>`;
+    }).join('');
+}
+
+function generateGroupHeaders(sortedYears, groupsByYearAndProgram) {
+    return sortedYears.flatMap(year =>
+        Object.values(groupsByYearAndProgram[year]).flatMap(programGroups =>
+            programGroups.map(group => `<td>${group.name}</td>`)
+        )
+    ).join('');
+}
+
+function generateProgramHeaders(sortedYears, groupsByYearAndProgram, programs) {
+    return sortedYears.flatMap(year =>
+        Object.entries(groupsByYearAndProgram[year]).map(([programId, programGroups]) => {
+            const programName = programs[programId];
+            const translatedProgram = PROGRAM_TRANSLATIONS[programName] || "Невідома програма";
+            return `<td colspan="${programGroups.length}">${translatedProgram}</td>`;
+        })
+    ).join('');
+}
+
+function generateTableRows(sortedYears, groupsByYearAndProgram) {
+    return DAYS_OF_WEEK.map(day =>
+        TIME_SLOTS.map((time, index) => `
+            <tr>
+                ${index === 0 ? `<td rowspan="${TIME_SLOTS.length}">${day}</td>` : ''}
+                <td>${time}</td>
+                ${generateTableCells(sortedYears, groupsByYearAndProgram, day, time)}
+            </tr>
+        `).join('')
+    ).join('');
+}
+
+function generateTableCells(sortedYears, groupsByYearAndProgram, day, time) {
+    return sortedYears.flatMap(year =>
+        Object.values(groupsByYearAndProgram[year]).flatMap(programGroups =>
+            programGroups.map(group => `
+                <td data-group="${group.name}" data-day="${day}" data-time="${time}" class="schedule-cell"></td>
+            `)
+        )
+    ).join('');
+}
+
+// Data Grouping Function
+function groupDataByYearAndProgram(groups) {
+    const result = {};
+    groups.forEach(group => {
+        result[group.year] = result[group.year] || {};
+        result[group.year][group.program] = result[group.year][group.program] || [];
+        result[group.year][group.program].push(group);
+        result[group.year][group.program].sort((a, b) => a.name.localeCompare(b.name, "uk"));
+    });
+    return result;
+}
+
+// UI Element Creation Functions
+function createSelect(defaultText, options) {
+    return `<select><option value="">${defaultText}</option>${options.map(opt => `<option value="${opt.id}">${opt.name}</option>`).join('')}</select>`;
 }
 
 function createCourseDiv(courseIndex) {
@@ -199,14 +365,25 @@ function createLessonDiv(time, groups, courseIndex, programIndex, subjects, teac
         .join(" ");
 
     div.innerHTML = `
-        <strong>${time}</strong> ${filteredGroups} <br>
-        ${createSelect('Оберіть предмет', subjects)}
-        ${createSelect('Оберіть викладача', teachers)}
-        ${createSelect('Оберіть аудиторію', auditoriums)}
-        <button class="add-lesson-btn" onclick="addLesson('${time}', this)">+</button>
-        <button class="remove-lesson-btn hidden" onclick="removeLesson(this)">-</button>
+        <div class="time">
+            <strong>${time}</strong>
+            <button class="add-lesson-btn" onclick="addLesson('${time}', this)">+</button>
+            <button class="remove-lesson-btn hidden" onclick="removeLesson(this)">-</button>
+        </div>
+        <div class="groups">${filteredGroups}</div>
+        <div class="selects">
+            <div class="subjects">${createSelect('Оберіть предмет', subjects)}</div>
+            <div class="teachers">${createSelect('Оберіть викладача', teachers)}</div>
+            <div class="auditoriums">${createSelect('Оберіть аудиторію', auditoriums)}</div>
+            <div class="lesson-type">
+                ${createLessonTypeSelect()}
+            </div>
+        </div>
+        <div class="week">
+            <label><input type="radio" name="week-${time}" value="Both" checked> Обидва тижні</label>
+            <label><input type="radio" name="week-${time}" value="Odd"> Непарний</label>
+            <label><input type="radio" name="week-${time}" value="Even"> Парний</label>
+        </div>
     `;
     return div;
 }
-
-        //фільтрувати за групами та програмами

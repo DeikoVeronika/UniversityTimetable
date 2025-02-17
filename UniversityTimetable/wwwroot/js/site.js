@@ -221,7 +221,7 @@ async function updateEntityData(entity) {
 // Entity Display
 function displayEntities(entity, data) {
     if (entity === "Lessons") {
-        populateSchedule(data);
+        populateLessons(data);
         return;
     }
 

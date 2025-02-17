@@ -174,14 +174,12 @@ select {
 
 /* Start Schedule Page */
 .lesson-card {
-    /*min-width: 200px;*/
     text-align: start;
     margin: 5px;
     padding: 14px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 1.5rem 0;
     box-shadow: 0 2px 16px rgba(42, 60, 71, 0.03);
-    /*background: rgba(255, 255, 255, 0.9);*/
 }
 
 .lesson-card:hover {
@@ -440,6 +438,132 @@ select {
 .filters {
     display: flex;
     justify-content: space-around;
+}
+
+/* Start schedule creation page */
+.create-schedule-wrapper .hidden {
+    display: none;
+}
+
+.create-schedule-wrapper .tabs button,
+.create-schedule-wrapper .course-tabs button {
+    margin-right: 10px;
+}
+
+.create-schedule-wrapper .lesson-block {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.create-schedule-wrapper .add-lesson-btn,
+.create-schedule-wrapper .remove-lesson-btn {
+    cursor: pointer;
+    color: green;
+}
+
+.create-schedule-wrapper .remove-lesson-btn {
+    color: red;
+}
+
+.create-schedule-wrapper #schedule-table {
+    width: 100%;
+    max-height: 92vh;
+    overflow: auto;
+}
+
+.create-schedule-wrapper .lesson-block {
+    display: flex;
+    gap: 2rem;
+}
+
+.create-schedule-wrapper .groups,
+.create-schedule-wrapper .selects,
+.create-schedule-wrapper .week {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.create-schedule-wrapper .groups label,
+.create-schedule-wrapper .selects label,
+.create-schedule-wrapper .week label {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.create-schedule-wrapper table,
+.create-schedule-wrapper td,
+.create-schedule-wrapper th {
+    border: 1px solid #595959;
+    border-collapse: collapse;
+}
+
+.create-schedule-wrapper td,
+.create-schedule-wrapper th {
+    text-align: center;
+    padding: 1rem;
+    width: 30px;
+    height: 25px;
+}
+
+.create-schedule-wrapper th {
+    background: #f0e6cc;
+}
+
+.create-schedule-wrapper .even {
+    background: #fbf8f0;
+}
+
+.create-schedule-wrapper .odd {
+    background: #fefcf9;
+}
+
+.create-schedule-wrapper .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.create-schedule-wrapper .modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+}
+
+.create-schedule-wrapper .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.create-schedule-wrapper .close:hover {
+    color: black;
+    cursor: pointer;
+}
+
+.create-schedule-wrapper .schedule-cell.highlight {
+    background-color: rgba(0, 150, 255, 0.3);
+    transition: background-color 0.05s ease-in-out;
+}
+
+.create-schedule-wrapper tr:nth-child(even) {
+    background-color: #fff;
+}
+
+.create-schedule-wrapper select {
+    margin: 0;
+    width: auto;
+    height: auto;
+    border-radius: 0;
 }
 
 
