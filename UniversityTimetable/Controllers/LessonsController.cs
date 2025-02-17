@@ -21,6 +21,42 @@ namespace UniversityTimetable.Controllers
             _context = context;
         }
 
+        [HttpGet("check-lesson")]
+        public async Task<IActionResult> CheckLesson([FromQuery] string day, [FromQuery] string time, [FromQuery] List<string> groups)
+        {
+            if (!Enum.TryParse<DayOfWeek>(day, out var parsedDay))
+            {
+                return BadRequest("Невірний день тижня");
+            }
+
+            if (!TimeSpan.TryParse(time, out var parsedTime))
+            {
+                return BadRequest("Невірний час. Використовуйте формат 'HH:mm'");
+            }
+
+            var lesson = await _context.Lessons
+                .Where(l => l.DayOfWeek == parsedDay && l.StartTime == parsedTime && groups.Contains(l.GroupId.ToString()))
+                .FirstOrDefaultAsync();
+
+            if (lesson == null)
+            {
+                return Ok(new { exists = false });
+            }
+
+            return Ok(new
+            {
+                exists = true,
+                subjectId = lesson.SubjectId,
+                teacherId = lesson.TeacherId,
+                auditoriumId = lesson.AuditoriumId,
+                lessonType = lesson.LessonType.ToString(),
+                week = lesson.Week.ToString(),
+                id = lesson.Id // Додаємо id до відповіді
+            });
+
+
+        }
+
         // GET: api/Lessons
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetLessons()
@@ -88,7 +124,6 @@ namespace UniversityTimetable.Controllers
             });
         }
 
-
         // PUT: api/Lessons/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -139,10 +174,11 @@ namespace UniversityTimetable.Controllers
         [HttpPost]
         public async Task<ActionResult<Lesson>> PostLesson(Lesson lesson)
         {
-            //if (!LessonTimes.AvailableTimes.Contains(lesson.StartTime))
-            //{
-            //    return BadRequest("Недопустиме значення часу початку.");
-            //}
+            if (lesson.Id == Guid.Empty)
+            {
+                lesson.Id = Guid.NewGuid(); 
+            }
+
             _context.Lessons.Add(lesson);
             await _context.SaveChangesAsync();
 
