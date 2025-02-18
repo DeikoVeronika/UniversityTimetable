@@ -104,14 +104,22 @@ function initializeModal() {
 }
 
 // Lesson Management
-function addLesson(time, btn) {
+let blockNumber = 1;
+function addLessonContainer(time, btn) {
     const lessonDiv = btn.closest(".lesson-block");
     const newLessonDiv = lessonDiv.cloneNode(true);
     newLessonDiv.querySelector(".add-lesson-btn").remove();
     newLessonDiv.querySelector(".remove-lesson-btn").classList.remove("hidden");
     resetLessonInputs(newLessonDiv);
+
+    const weekDiv = newLessonDiv.querySelector(".week");
+    weekDiv.innerHTML = createWeekOptions(time, blockNumber);
+
+    blockNumber++;
+
     lessonDiv.parentNode.insertBefore(newLessonDiv, lessonDiv.nextSibling);
 }
+
 
 function removeLesson(btn) {
     btn.closest(".lesson-block").remove();
@@ -120,6 +128,7 @@ function removeLesson(btn) {
 function resetLessonInputs(lessonDiv) {
     lessonDiv.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
     lessonDiv.querySelectorAll(".group-checkbox").forEach(checkbox => checkbox.checked = false);
+    lessonDiv.querySelectorAll("input[type='radio']").forEach(radio => radio.checked = false);
 }
 
 // Day and Course Display
@@ -170,53 +179,58 @@ function handleMouseEnter(event, cell) {
 }
 
 async function endSelection(modal, modalInfo, saveLesson) {
-    isSelecting = false;
     if (selectedCells.length === 0) return;
+    isSelecting = false;
 
-    const { day, time, groups, groupIds, uniqueDays, uniqueTimes } = extractSelectionData(selectedCells);
-
-    if (!isValidSelection(uniqueDays, uniqueTimes)) {
-        alert("Оберіть лише клітинки одного часу та дня.");
-        clearSelection();
-        return;
-    }
+    const { day, time, groupIds } = extractSelectionData(selectedCells);
+    if (!isValidSelection(day, time)) return;
 
     const lessonExists = await checkLessonExists(day, time, groupIds);
+    const groupNames = await getGroupNames(groupIds);
 
-    showModal(modal, modalInfo, day, time, groups);
+    showModal(modal, modalInfo, day, time, groupNames.join(", "));
     loadModalOptions(saveLesson, groupIds, lessonExists, lessonExists.exists ? lessonExists : undefined);
 }
 
 function extractSelectionData(selectedCells) {
     const uniqueDays = new Set();
     const uniqueTimes = new Set();
-    const uniqueGroups = new Set();
-    const groupIds = [];
+    const groupIds = new Set();
 
     selectedCells.forEach(cell => {
         uniqueDays.add(cell.getAttribute("data-day"));
         uniqueTimes.add(cell.getAttribute("data-time"));
-        uniqueGroups.add(cell.getAttribute("data-group"));
-        groupIds.push(cell.getAttribute("data-group-id"));
+
+        const cellGroupIds = cell.getAttribute("data-group-ids") || cell.getAttribute("data-group-id");
+        cellGroupIds.split(",").forEach(groupId => groupIds.add(groupId.trim()));
     });
 
     return {
         day: [...uniqueDays][0],
         time: [...uniqueTimes][0],
-        groups: [...uniqueGroups].join(", "),
-        groupIds,
-        uniqueDays,
-        uniqueTimes
+        groupIds: [...groupIds],
     };
 }
 
-function isValidSelection(uniqueDays, uniqueTimes) {
-    return uniqueDays.size === 1 && uniqueTimes.size === 1;
+function isValidSelection(day, time) {
+    return day && time;
 }
 
-function showModal(modal, modalInfo, day, time, groups) {
+async function getGroupNames(groupIds) {
+    try {
+        const response = await fetch(`/api/groups?ids=${groupIds.join(",")}`);
+        if (!response.ok) throw new Error('Failed to fetch group names');
+        const groups = await response.json();
+        return groups.filter(group => groupIds.includes(group.id)).map(group => group.name);
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+function showModal(modal, modalInfo, day, time, groupNames) {
     modal.style.display = "block";
-    modalInfo.innerHTML = `<strong>${day}, ${time}</strong><br>Групи: ${groups}`;
+    modalInfo.innerHTML = `<strong>${day}, ${time}</strong><br>Групи: ${groupNames}`;
 }
 
 async function checkLessonExists(day, time, groupIds) {
@@ -282,8 +296,10 @@ function generateModalContent(subjects, teachers, auditoriums, existingLessonDat
         <div class="week">
             ${generateWeekOptions(existingLessonData?.week)}
         </div>
+        ${existingLessonData ? `<button class="delete-lesson" onclick="deleteLesson('${existingLessonData.id}')">Видалити</button>` : ''}
     `;
 }
+
 
 function generateWeekOptions(selectedWeek) {
     const options = ['Both', 'Odd', 'Even'];
@@ -316,11 +332,11 @@ function createLessonTypeSelect(defaultText, selectedValue = null) {
 
 async function saveSelection(groupIds, lessonExists, existingLessonData) {
     const selectedValues = {
-        subject: document.querySelector(".subjects select").value,
-        teacher: document.querySelector(".teachers select").value,
-        auditorium: document.querySelector(".auditoriums select").value,
-        weekType: document.querySelector('input[name="week-type"]:checked').value,
-        lessonType: document.querySelector(".lesson-type select").value
+        subject: document.querySelector(".subjects select") ? document.querySelector(".subjects select").value : null,
+        teacher: document.querySelector(".teachers select") ? document.querySelector(".teachers select").value : null,
+        auditorium: document.querySelector(".auditoriums select") ? document.querySelector(".auditoriums select").value : null,
+        weekType: document.querySelector('input[name="week-type"]:checked') ? document.querySelector('input[name="week-type"]:checked').value : null,
+        lessonType: document.querySelector(".lesson-type select") ? document.querySelector(".lesson-type select").value : null
     };
 
     const lessons = groupIds.map(groupId => createLessonObject(groupId, selectedValues, existingLessonData));
@@ -334,6 +350,7 @@ async function saveSelection(groupIds, lessonExists, existingLessonData) {
         console.error("Error saving lesson:", error);
     }
 }
+
 
 function createLessonObject(groupId, selectedValues, existingLessonData) {
     const cell = selectedCells.find(cell => cell.getAttribute("data-group-id") === groupId);
@@ -506,19 +523,67 @@ function fillSchedule(lessons) {
 
         const cell = document.querySelector(`td[data-group-id="${lesson.groupId}"][data-day="${day}"][data-time="${normalizedTime}"]`);
         if (cell) {
-            const subjectInfo = `${lesson.subjectName}`;
-            const teacherInfo = `${lesson.teacherName}`;
-            const auditoriumInfo = `Аудиторія: ${lesson.auditoriumName}`;
+            const lessonKey = `${lesson.subjectId}-${lesson.teacherId}-${lesson.auditoriumId}-${lesson.lessonType}-${lesson.week}`;
+            cell.dataset.lessonKey = lessonKey;
+            cell.classList.add(getLessonTypeClass(lesson.lessonType));
 
-            cell.innerHTML += `
-        <span class="subjectName"><strong>${subjectInfo}</strong></span>
-        <br>
-        <span class="teacherName">${teacherInfo}</span>
-        <br>
-        <span class="auditoriumName">${auditoriumInfo}</span>`;
+            const groupIds = cell.dataset.groupIds ? new Set(cell.dataset.groupIds.split(",")) : new Set();
+            groupIds.add(lesson.groupId);
+            cell.dataset.groupIds = Array.from(groupIds).join(",");
+
+            cell.innerHTML = `
+                <div class="lessonInfo">
+                    <span class="subjectName"><strong>${lesson.subjectName}</strong></span>
+                    <br>
+                    <span class="teacherName">${lesson.teacherName}</span>
+                    <br>
+                    <span class="auditoriumName">Аудиторія: ${lesson.auditoriumName}</span>
+                </div>`;
         }
     });
 
+    mergeAdjacentCells();
+}
+
+function mergeAdjacentCells() {
+    document.querySelectorAll("tr").forEach(row => {
+        let previousCell = null;
+        let colspan = 1;
+        let groupIds = [];
+
+        row.querySelectorAll("td.schedule-cell").forEach(cell => {
+            if (!cell.dataset.lessonKey || !cell.innerHTML.trim()) {
+                previousCell = null;
+                colspan = 1;
+                groupIds = [];
+                return;
+            }
+
+            if (previousCell && previousCell.dataset.lessonKey === cell.dataset.lessonKey) {
+                colspan++;
+                previousCell.setAttribute("colspan", colspan);
+                groupIds.push(cell.dataset.groupId);
+                previousCell.setAttribute("data-group-ids", groupIds.join(","));
+                cell.remove();
+            } else {
+                previousCell = cell;
+                colspan = 1;
+                groupIds = [cell.dataset.groupId];
+                previousCell.setAttribute("data-group-ids", groupIds.join(","));
+            }
+        });
+    });
+}
+
+function getLessonTypeClass(lessonType) {
+    const classMap = {
+        0: "lecture-card",
+        1: "practice-card",
+        2: "consultation-card",
+        3: "seminar-card",
+        4: "lab-card"
+    };
+    return classMap[lessonType] || "default-lesson-card";
 }
 
 function normalizeTime(time) {
@@ -574,38 +639,53 @@ function createProgramDiv(program, day, courseIndex) {
     return div;
 }
 
-function createLessonDiv(time, groups, courseIndex, programIndex, subjects, teachers, auditoriums) {
+function createLessonDiv(time, groups, courseIndex, programIndex, subjects, teachers, auditoriums, blockNumber) {
     const div = document.createElement("div");
     div.classList.add("lesson-block");
 
-    const filteredGroups = groups
-        .filter(group => group.year === courseIndex && group.program === programIndex)
-        .map(group => `<label><input type="checkbox" class="group-checkbox" value="${group.id}">${group.name}</label>`)
-        .join(" ");
+    const filteredGroups = getFilteredGroups(groups, courseIndex, programIndex);
 
     div.innerHTML = `
         <div class="time">
             <strong>${time}</strong>
-            <button class="add-lesson-btn" onclick="addLesson('${time}', this)">+</button>
+            <button class="add-lesson-btn" onclick="addLessonContainer('${time}', this)">+</button>
             <button class="remove-lesson-btn hidden" onclick="removeLesson(this)">-</button>
         </div>
         <div class="groups">${filteredGroups}</div>
         <div class="selects">
-            <div class="subjects">${createSelect('Оберіть предмет', subjects)}</div>
-            <div class="teachers">${createSelect('Оберіть викладача', teachers)}</div>
-            <div class="auditoriums">${createSelect('Оберіть аудиторію', auditoriums)}</div>
-            <div class="lesson-type">
-                ${createLessonTypeSelect()}
-            </div>
+            ${createSelects(subjects, teachers, auditoriums)}
+            <div class="lesson-type">${createLessonTypeSelect('Оберіть тип заняття')}</div>
         </div>
-        <div class="week">
-            <label><input type="radio" name="week-${time}" value="Both" checked> Обидва тижні</label>
-            <label><input type="radio" name="week-${time}" value="Odd"> Непарний</label>
-            <label><input type="radio" name="week-${time}" value="Even"> Парний</label>
-        </div>
+        <div class="week">${createWeekOptions(time, blockNumber)}</div>
     `;
     return div;
 }
+
+
+function getFilteredGroups(groups, courseIndex, programIndex) {
+    return groups
+        .filter(group => group.year === courseIndex && group.program === programIndex)
+        .map(group => `<label><input type="checkbox" class="group-checkbox" value="${group.id}">${group.name}</label>`)
+        .join(" ");
+}
+
+function createSelects(subjects, teachers, auditoriums) {
+    return `
+        <div class="subjects">${createSelect('Оберіть предмет', subjects)}</div>
+        <div class="teachers">${createSelect('Оберіть викладача', teachers)}</div>
+        <div class="auditoriums">${createSelect('Оберіть аудиторію', auditoriums)}</div>
+    `;
+}
+
+function createWeekOptions(time, blockNumber) {
+    return `
+        <label><input type="radio" name="week-${time}-block-${blockNumber}" value="Both"> Обидва тижні</label>
+        <label><input type="radio" name="week-${time}-block-${blockNumber}" value="Odd"> Непарний</label>
+        <label><input type="radio" name="week-${time}-block-${blockNumber}" value="Even"> Парний</label>
+    `;
+}
+
+
 
 async function addLesson(lessons) {
     try {
@@ -657,6 +737,26 @@ async function updateLesson(lesson) {
         console.error("Помилка при оновленні уроку:", error);
     }
 }
+
+async function deleteLesson(lessonId) {
+
+    try {
+        const response = await fetch(`/api/lessons/${lessonId}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            await generateTable();
+            initializeModal();
+            closeModalWindow(document.getElementById("modal"));
+        } else {
+            console.error("Помилка при видаленні уроку", response.status);
+        }
+    } catch (error) {
+        console.error("Помилка при видаленні:", error);
+    }
+}
+
 
 async function handleResponseError(response) {
     const errorText = await response.text();

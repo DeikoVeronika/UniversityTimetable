@@ -196,7 +196,7 @@ select {
 }
 
 .practice-card {
-    background: rgb(199 232 243 / 0.9);
+    background: rgb(239 205 170 / 55%);
 }
 
 .consultation-card {
@@ -507,6 +507,7 @@ select {
     height: 25px;
 }
 
+
 .create-schedule-wrapper th {
     background: #f0e6cc;
 }
@@ -570,6 +571,10 @@ select {
     font-weight: 700;
 }
 
+.lessonInfo {
+    margin: -1rem;
+    padding: 1rem;
+}
 
 
 /*@media (min-width: 300px) {
