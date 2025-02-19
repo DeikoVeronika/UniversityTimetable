@@ -185,7 +185,7 @@ async function endSelection(modal, modalInfo, saveLesson) {
     const { day, time, groupIds } = extractSelectionData(selectedCells);
     if (!isValidSelection(day, time)) return;
 
-    const lessonExists = await checkLessonExists(day, time, groupIds);
+    const lessonExists = await checkLessonExistence(day, time, groupIds);
     const groupNames = await getGroupNames(groupIds);
 
     showModal(modal, modalInfo, day, time, groupNames.join(", "));
@@ -233,13 +233,18 @@ function showModal(modal, modalInfo, day, time, groupNames) {
     modalInfo.innerHTML = `<strong>${day}, ${time}</strong><br>Групи: ${groupNames}`;
 }
 
-async function checkLessonExists(day, time, groupIds) {
+async function checkLessonExistence(day, time, groupIds) {
     const dayOfWeek = getDayOfWeek(day);
     const encodedDay = encodeURIComponent(dayOfWeek);
     const encodedTime = time;
-    const encodedGroups = groupIds.map(groupId => encodeURIComponent(groupId)).join(",");
 
-    const response = await fetch(`/api/lessons/check-lesson?day=${encodedDay}&time=${encodedTime}&groups=${encodedGroups}`);
+    const url = new URL("/api/lessons/check-lesson", window.location.origin);
+    url.searchParams.append("day", encodedDay);
+    url.searchParams.append("time", encodedTime);
+
+    groupIds.forEach(groupId => url.searchParams.append("groups", groupId));
+
+    const response = await fetch(url);
 
     if (response.ok) {
         const data = await response.json();
@@ -250,13 +255,14 @@ async function checkLessonExists(day, time, groupIds) {
             auditoriumId: data.auditoriumId,
             lessonType: data.lessonType,
             week: data.week,
-            id: data.id 
+            id: data.id
         } : { exists: false };
     } else {
         console.error("Помилка при перевірці уроку", response.status);
         return { exists: false };
     }
 }
+
 
 async function loadModalOptions(saveLesson, groupIds, lessonExists, existingLessonData = null) {
     const apiEndpoints = ["/api/subjects", "/api/teachers", "/api/auditoriums"];

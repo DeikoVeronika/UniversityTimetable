@@ -51,10 +51,8 @@ namespace UniversityTimetable.Controllers
                 auditoriumId = lesson.AuditoriumId,
                 lessonType = lesson.LessonType.ToString(),
                 week = lesson.Week.ToString(),
-                id = lesson.Id // Додаємо id до відповіді
+                id = lesson.Id
             });
-
-
         }
 
         // GET: api/Lessons
