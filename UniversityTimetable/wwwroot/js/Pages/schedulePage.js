@@ -241,44 +241,43 @@ async function checkLessonExistence(day, time, groupIds) {
     const url = new URL("/api/lessons/check-lesson", window.location.origin);
     url.searchParams.append("day", encodedDay);
     url.searchParams.append("time", encodedTime);
-
     groupIds.forEach(groupId => url.searchParams.append("groups", groupId));
 
     const response = await fetch(url);
 
     if (response.ok) {
         const data = await response.json();
-        return data.exists ? {
-            exists: true,
-            subjectId: data.subjectId,
-            teacherId: data.teacherId,
-            auditoriumId: data.auditoriumId,
-            lessonType: data.lessonType,
-            week: data.week,
-            id: data.id
-        } : { exists: false };
+        return data.exists ? { exists: true, lessons: data.lessons } : { exists: false, lessons: [] };
     } else {
         console.error("Помилка при перевірці уроку", response.status);
-        return { exists: false };
+        return { exists: false, lessons: [] };
     }
 }
 
 
-async function loadModalOptions(saveLesson, groupIds, lessonExists, existingLessonData = null) {
+
+async function loadModalOptions(saveLesson, groupIds, lessonExists, existingLessonData = { exists: false, lessons: [] }) {
     const apiEndpoints = ["/api/subjects", "/api/teachers", "/api/auditoriums"];
 
     try {
         const [subjects, teachers, auditoriums] = await fetchAllData(apiEndpoints);
 
         const modalSelects = document.getElementById("modal-selects");
-        modalSelects.innerHTML = generateModalContent(subjects, teachers, auditoriums, existingLessonData);
 
-        saveLesson.onclick = () => saveSelection(groupIds, lessonExists, existingLessonData);
+        // Якщо є уроки, генеруємо форми для всіх, інакше порожня форма
+        modalSelects.innerHTML = existingLessonData.exists && existingLessonData.lessons.length > 0
+            ? existingLessonData.lessons.map((lesson, index) =>
+                generateModalContent(subjects, teachers, auditoriums, lesson, index)
+            ).join('')
+            : generateModalContent(subjects, teachers, auditoriums, null, 0);
+
+        saveLesson.onclick = () => saveSelection(groupIds, lessonExists, existingLessonData.lessons);
 
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 }
+
 
 async function fetchAllData(endpoints) {
     return Promise.all(
@@ -289,29 +288,32 @@ async function fetchAllData(endpoints) {
     );
 }
 
-function generateModalContent(subjects, teachers, auditoriums, existingLessonData) {
+function generateModalContent(subjects, teachers, auditoriums, lesson) {
+    const modalId = lesson ? lesson.id : `new-${Date.now()}`; 
+
     return `
-        <div class="selects">
-            <div class="subjects">${createSelect('Оберіть предмет', subjects, existingLessonData?.subjectId)}</div>
-            <div class="teachers">${createSelect('Оберіть викладача', teachers, existingLessonData?.teacherId)}</div>
-            <div class="auditoriums">${createSelect('Оберіть аудиторію', auditoriums, existingLessonData?.auditoriumId)}</div>
-            <div class="lesson-type">
-                ${createLessonTypeSelect('Оберіть тип заняття', existingLessonData?.lessonType)}
+        <div>
+            <div class="selects">
+                <div class="subjects">${createSelect(`Оберіть предмет`, subjects, lesson?.subjectId)}</div>
+                <div class="teachers">${createSelect(`Оберіть викладача`, teachers, lesson?.teacherId)}</div>
+                <div class="auditoriums">${createSelect(`Оберіть аудиторію`, auditoriums, lesson?.auditoriumId)}</div>
+                <div class="lesson-type">
+                    ${createLessonTypeSelect(`Оберіть тип заняття`, lesson?.lessonType)}
+                </div>
             </div>
+            <div class="week">
+            ${generateWeekOptions(lesson?.week, modalId)}
+            </div>
+            ${lesson ? `<button class="delete-lesson" onclick="deleteLesson('${lesson.id}')">Видалити</button>` : ''}
         </div>
-        <div class="week">
-            ${generateWeekOptions(existingLessonData?.week)}
-        </div>
-        ${existingLessonData ? `<button class="delete-lesson" onclick="deleteLesson('${existingLessonData.id}')">Видалити</button>` : ''}
     `;
 }
 
-
-function generateWeekOptions(selectedWeek) {
+function generateWeekOptions(selectedWeek, modalId) {
     const options = ['Both', 'Odd', 'Even'];
     return options.map(week => `
         <label>
-            <input type="radio" name="week-type" value="${week}" ${selectedWeek === week ? 'checked' : ''}> ${week === 'Both' ? 'Обидва' : week === 'Odd' ? 'Непарний' : 'Парний'}
+            <input type="radio" name="week-type-${modalId}" value="${week}" ${selectedWeek === week ? 'checked' : ''}> ${week === 'Both' ? 'Обидва' : week === 'Odd' ? 'Непарний' : 'Парний'}
         </label>
     `).join('');
 }
@@ -341,14 +343,14 @@ async function saveSelection(groupIds, lessonExists, existingLessonData) {
         subject: document.querySelector(".subjects select") ? document.querySelector(".subjects select").value : null,
         teacher: document.querySelector(".teachers select") ? document.querySelector(".teachers select").value : null,
         auditorium: document.querySelector(".auditoriums select") ? document.querySelector(".auditoriums select").value : null,
-        weekType: document.querySelector('input[name="week-type"]:checked') ? document.querySelector('input[name="week-type"]:checked').value : null,
+        weekType: getSelectedWeekType(), 
         lessonType: document.querySelector(".lesson-type select") ? document.querySelector(".lesson-type select").value : null
     };
 
     const lessons = groupIds.map(groupId => createLessonObject(groupId, selectedValues, existingLessonData));
 
     try {
-        await Promise.all(lessons.map(lesson => lesson.Id ? updateLesson(lesson) : addLesson([lesson])));
+        await Promise.all(lessons.map(lesson => lesson.Id ? updateLesson(lesson) : addLesson(lesson)));
         await generateTable();
         initializeModal();
         closeModalWindow(document.getElementById("modal"));
@@ -357,9 +359,17 @@ async function saveSelection(groupIds, lessonExists, existingLessonData) {
     }
 }
 
+function getSelectedWeekType() {
+    const weekInputs = document.querySelectorAll('input[type="radio"][name^="week-type-"]:checked');
+    return weekInputs.length > 0 ? weekInputs[0].value : null;
+}
 
 function createLessonObject(groupId, selectedValues, existingLessonData) {
     const cell = selectedCells.find(cell => cell.getAttribute("data-group-id") === groupId);
+
+    // Якщо existingLessonData - це масив, беремо перший елемент
+    const lessonData = Array.isArray(existingLessonData) ? existingLessonData[0] : existingLessonData;
+
     return {
         GroupId: groupId,
         SubjectId: selectedValues.subject,
@@ -370,7 +380,7 @@ function createLessonObject(groupId, selectedValues, existingLessonData) {
         StartTime: `${cell.getAttribute("data-time")}:00`,
         Week: getWeekType(selectedValues.weekType),
         LessonType: getLessonType(selectedValues.lessonType),
-        Id: existingLessonData ? existingLessonData.id : undefined
+        Id: lessonData ? lessonData.id : undefined
     };
 }
 
@@ -691,20 +701,16 @@ function createWeekOptions(time, blockNumber) {
     `;
 }
 
-
-
 async function addLesson(lessons) {
     try {
-        for (const lesson of lessons) {
-            //// Перевірка наявності уроку перед додаванням
-            //await checkLessonAvailability(lesson);
+        if (!Array.isArray(lessons)) {
+            lessons = [lessons]; 
+        }
 
-            // Відправка запиту на створення уроку
+        for (const lesson of lessons) {
             await sendCreateRequest('Lessons', lesson);
         }
 
-        //await updateEntityData('Lessons'); // Оновлення даних
-        //resetForm('Lessons'); // Скидання форми після збереження уроків
     } catch (error) {
         console.error("Помилка при додаванні уроків:", error);
     }

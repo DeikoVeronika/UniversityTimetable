@@ -34,11 +34,11 @@ namespace UniversityTimetable.Controllers
                 return BadRequest("Невірний час. Використовуйте формат 'HH:mm'");
             }
 
-            var lesson = await _context.Lessons
+            var lessons = await _context.Lessons
                 .Where(l => l.DayOfWeek == parsedDay && l.StartTime == parsedTime && groups.Contains(l.GroupId.ToString()))
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            if (lesson == null)
+            if (!lessons.Any())
             {
                 return Ok(new { exists = false });
             }
@@ -46,12 +46,15 @@ namespace UniversityTimetable.Controllers
             return Ok(new
             {
                 exists = true,
-                subjectId = lesson.SubjectId,
-                teacherId = lesson.TeacherId,
-                auditoriumId = lesson.AuditoriumId,
-                lessonType = lesson.LessonType.ToString(),
-                week = lesson.Week.ToString(),
-                id = lesson.Id
+                lessons = lessons.Select(l => new
+                {
+                    subjectId = l.SubjectId,
+                    teacherId = l.TeacherId,
+                    auditoriumId = l.AuditoriumId,
+                    lessonType = l.LessonType.ToString(),
+                    week = l.Week.ToString(),
+                    id = l.Id
+                }).ToList()
             });
         }
 
