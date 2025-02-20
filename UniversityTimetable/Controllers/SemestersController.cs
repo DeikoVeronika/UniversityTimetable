@@ -32,10 +32,10 @@ namespace UniversityTimetable.Controllers
                 s.Name,
                 s.StartDate,
                 s.EndDate,
-                isActive = s.IsActive() // Викликаємо метод IsActive() для кожного семестру
+                isActive = s.IsActive() 
             });
 
-            return Ok(semestersWithIsActive); // Повертаємо результат у форматі JSON
+            return Ok(semestersWithIsActive); 
         }
 
         // GET: api/Semesters/5

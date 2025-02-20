@@ -43,49 +43,42 @@ public class ScheduleController : ControllerBase
         {
             var worksheet = package.Workbook.Worksheets.Add("Schedule");
 
-            // Column headers
             worksheet.Cells[1, 1].Value = "Day";
             worksheet.Cells[1, 2].Value = "Time";
 
-            // Retrieve and sort unique groups
             var groups = lessons.Select(l => l.Group).Distinct().OrderBy(g => g?.Name).ToList();
 
             int col = 3;
             foreach (var group in groups)
             {
-                // Write course name, program, and group name
-                worksheet.Cells[1, col].Value = group?.Year; // Course name
-                worksheet.Cells[2, col].Value = group?.Program; // Program name
-                worksheet.Cells[3, col].Value = group?.Name; // Group name
+                worksheet.Cells[1, col].Value = group?.Year; 
+                worksheet.Cells[2, col].Value = group?.Program; 
+                worksheet.Cells[3, col].Value = group?.Name; 
                 col++;
             }
 
-            // Group lessons by day and time
             var schedule = lessons
                 .GroupBy(l => new { l.DayOfWeek, l.StartTime })
                 .OrderBy(g => g.Key.DayOfWeek)
                 .ThenBy(g => g.Key.StartTime)
                 .ToList();
 
-            int row = 4; // Start from row 4, as headers occupy the first 3 rows
-            string currentDay = string.Empty; // To track the current day of the week
+            int row = 4;
+            string currentDay = string.Empty; 
 
             foreach (var lessonGroup in schedule)
             {
                 var dayOfWeek = lessonGroup.Key.DayOfWeek.ToString();
                 var startTime = lessonGroup.Key.StartTime.ToString(@"hh\:mm");
 
-                // If the day has changed, write it in the first column
                 if (dayOfWeek != currentDay)
                 {
                     worksheet.Cells[row, 1].Value = dayOfWeek;
                     currentDay = dayOfWeek;
                 }
 
-                // Write the start time of the lesson
                 worksheet.Cells[row, 2].Value = startTime;
 
-                // Write data for each group
                 col = 3;
                 foreach (var group in groups)
                 {
@@ -100,7 +93,6 @@ public class ScheduleController : ControllerBase
                 row++;
             }
 
-            // Обчислюємо останній стовпець
             int lastColumn = col - 1;
 
             MergeDayCells(worksheet, row);           
@@ -131,21 +123,19 @@ public class ScheduleController : ControllerBase
 
     private void MergeCellsYearRow(ExcelWorksheet worksheet, int lastColumn)
     {
-        int startMergeCol = 3;  // Починаємо з 3-го стовпця
+        int startMergeCol = 3;  
         string previousValue = worksheet.Cells[1, startMergeCol].Text;
 
         for (int col = startMergeCol + 1; col <= lastColumn; col++)
         {
             string currentValue = worksheet.Cells[1, col].Text;
 
-            // Якщо значення в клітинках однакові, об'єднуємо їх
             if (previousValue == currentValue)
             {
                 worksheet.Cells[1, startMergeCol, 1, col].Merge = true;
             }
             else
             {
-                // Якщо значення змінилося, оновлюємо стартову клітинку для злиття
                 startMergeCol = col;
             }
 
@@ -155,21 +145,19 @@ public class ScheduleController : ControllerBase
 
     private void MergeCellsProgramRow(ExcelWorksheet worksheet, int lastColumn)
     {
-        int startMergeCol = 3;  // Починаємо з 3-го стовпця
+        int startMergeCol = 3; 
         string previousValue = worksheet.Cells[2, startMergeCol].Text;
 
         for (int col = startMergeCol + 1; col <= lastColumn; col++)
         {
             string currentValue = worksheet.Cells[2, col].Text;
 
-            // Якщо значення в клітинках однакові, об'єднуємо їх
             if (previousValue == currentValue)
             {
                 worksheet.Cells[2, startMergeCol, 2, col].Merge = true;
             }
             else
             {
-                // Якщо значення змінилося, оновлюємо стартову клітинку для злиття
                 startMergeCol = col;
             }
 

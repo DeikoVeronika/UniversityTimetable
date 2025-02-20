@@ -332,7 +332,6 @@ function createLessonDiv(item) {
     const lessonDiv = document.createElement("div");
     lessonDiv.classList.add("lesson-card");
 
-    // Додаємо клас відповідно до типу уроку
     const lessonTypeClass = getLessonTypeClass(item.lessonType);
     lessonDiv.classList.add(lessonTypeClass);
 
@@ -372,7 +371,6 @@ function createLessonDiv(item) {
     return lessonDiv;
 }
 
-// Функція для отримання CSS-класу за типом уроку
 function getLessonTypeClass(lessonType) {
     const classMap = {
         0: "lecture-card",
@@ -384,7 +382,6 @@ function getLessonTypeClass(lessonType) {
     return classMap[lessonType] || "default-lesson-card";
 }
 
-
 function isEvenWeek(startDate) {
     const diffDays = Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24));
     return (Math.floor(diffDays / 7) + 1) % 2 === 0;
@@ -393,7 +390,6 @@ function isEvenWeek(startDate) {
 function updateWeekHeader(startDate) {
     document.querySelector("#schedule-thead tr th:first-child").textContent = isEvenWeek(startDate) ? WEEK_TYPE.EVEN : WEEK_TYPE.ODD;
 }
-
 
 async function fetchSemesters() {
     await fetchData('Semesters', data => {
@@ -414,10 +410,10 @@ async function fetchSemesters() {
     });
 }
 
-
 function addActiveSemesterClass(element) {
     element.classList.add('active-semester');
 }
+
 function removeActiveSemesterClass() {
     const allSemesterDivs = document.querySelectorAll('.semester-filter-item');
     allSemesterDivs.forEach(div => div.classList.remove('active-semester'));
@@ -436,8 +432,6 @@ async function checkAvailability(auditoriumId, dayOfWeek, startTime, week, lesso
         const isAuditoriumAvailable = await checkAuditoriumAvailability(auditoriumId, dayOfWeek, formattedTime, week, lessonId, semesterId);
         const isTeacherAvailable = await checkTeacherAvailability(teacherId, dayOfWeek, formattedTime, week, lessonId, semesterId);
         const isGroupAvailable = await checkGroupAvailability(groupId, dayOfWeek, formattedTime, week, lessonId, semesterId);
-
-        //додати можливість додавати групу до аудиторії і викладача, навіть якщо він вже зайнятий
 
         if (!isTeacherAvailable && !isGroupAvailable) {
             showAlert('Викладач уже займається з групою у обраний час');

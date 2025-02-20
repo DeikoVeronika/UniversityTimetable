@@ -36,12 +36,18 @@ namespace UniversityTimetable.Controllers
 
             var lessons = await _context.Lessons
                 .Where(l => l.DayOfWeek == parsedDay && l.StartTime == parsedTime && groups.Contains(l.GroupId.ToString()))
+                .Include(l => l.Group) 
                 .ToListAsync();
 
             if (!lessons.Any())
             {
                 return Ok(new { exists = false });
             }
+
+            var groupNames = await _context.Groups
+                .Where(g => groups.Contains(g.Id.ToString()))
+                .Select(g => g.Name)
+                .ToListAsync();
 
             return Ok(new
             {
@@ -51,13 +57,15 @@ namespace UniversityTimetable.Controllers
                     subjectId = l.SubjectId,
                     teacherId = l.TeacherId,
                     auditoriumId = l.AuditoriumId,
+                    groupId = l.GroupId,
+                    groupName = l.Group?.Name,
                     lessonType = l.LessonType.ToString(),
                     week = l.Week.ToString(),
                     id = l.Id
-                }).ToList()
+                }).ToList(),
+                groupNames 
             });
         }
-
         // GET: api/Lessons
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetLessons()
@@ -153,7 +161,7 @@ namespace UniversityTimetable.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); 
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -169,6 +177,7 @@ namespace UniversityTimetable.Controllers
 
             return NoContent();
         }
+
 
         // POST: api/Lessons
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

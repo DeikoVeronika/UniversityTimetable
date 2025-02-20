@@ -26,8 +26,6 @@ function populateSemestersRow(row, item) {
     row.insertCell().textContent = formatDate(item.endDate);
 }
 
-
-// Функція для форматування дати для input type="date"
 function formatDateForInput(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -36,8 +34,6 @@ function formatDateForInput(dateString) {
     return `${year}-${month}-${day}`;
 }
 
-
-// Ця функція залишається без змін, для відображення в таблиці
 function formatDate(dateString) { 
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');

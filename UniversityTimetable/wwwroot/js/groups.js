@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         populateYearsCreate();
         populateProgramsCreate();
 
-        // Додавання обробника для кнопки "+"
         const addButton = document.getElementById('add-group-name-button');
         const deleteButton = document.getElementById('delete-group-name-button');
         const container = document.getElementById('group-names-container');

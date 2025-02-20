@@ -24,13 +24,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             lessons = data;
             filterData();
 
-            // Фільтрація по групі
             document.getElementById('group-filter').addEventListener('change', function () {
                 selectedGroup = this.value;
                 filterData();
             });
 
-            // Фільтрація по семестру
             document.getElementById('semester-filter').addEventListener('change', function () {
                 selectedSemester = this.value;
                 filterData();

@@ -492,6 +492,10 @@ select {
     gap: 0.5rem;
 }
 
+.create-schedule-wrapper .selects select {
+    width: 100%;
+}
+
 .create-schedule-wrapper table,
 .create-schedule-wrapper td,
 .create-schedule-wrapper th {
@@ -585,6 +589,24 @@ select {
     gap: 1rem;
 }
 
+#save-lesson {
+    width: 100%;
+}
+
+.lesson-block-modal {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin: 1rem 0;
+    padding: 8px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+}
+
+.modal-btns {
+    display: flex;
+    gap: 1rem;
+}
 
 /*@media (min-width: 300px) {
     .content {
