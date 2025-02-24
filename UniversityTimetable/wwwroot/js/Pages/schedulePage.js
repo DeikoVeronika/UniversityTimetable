@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     generateSchedule();
 });
 
-// Main Functions
 async function generateTable() {
     const tableBody = document.getElementById("table-body");
 
@@ -86,7 +85,6 @@ async function generateSchedule() {
     showDay(selectedDay);
 }
 
-// Modal Initialization
 function initializeModal() {
     const modal = document.getElementById("modal");
     const modalInfo = document.getElementById("modal-info");
@@ -103,7 +101,6 @@ function initializeModal() {
     window.addEventListener("mouseup", () => { isSelecting = false; });
 }
 
-// Lesson Management
 let blockNumber = 1;
 function addLessonContainer(time, btn) {
     const lessonDiv = btn.closest(".lesson-block");
@@ -120,7 +117,6 @@ function addLessonContainer(time, btn) {
     lessonDiv.parentNode.insertBefore(newLessonDiv, lessonDiv.nextSibling);
 }
 
-
 function removeLesson(btn) {
     btn.closest(".lesson-block").remove();
 }
@@ -131,7 +127,6 @@ function resetLessonInputs(lessonDiv) {
     lessonDiv.querySelectorAll("input[type='radio']").forEach(radio => radio.checked = false);
 }
 
-// Day and Course Display
 function showDay(dayId) {
     selectedDay = dayId;
     hideAll(`#course-${selectedCourse} > div`);
@@ -288,8 +283,6 @@ async function loadModalOptions(saveLesson, groupIds, lessonExists, existingLess
     }
 }
 
-
-
 function getModalIdSomehow() {
     const activeModal = document.querySelector(".lesson-block-modal");
     return activeModal ? activeModal.getAttribute("id").replace("modal-", "") : null;
@@ -361,11 +354,6 @@ async function saveSelection(groupIds, lessonExists, existingLessonData, modalId
         return groupIds.some(id => groupIdList.includes(id.toString()));
     });
 
-    if (!cell) {
-        console.error("Клітинка для будь-якої з груп не знайдена!");
-        return;
-    }
-
     const dayOfWeek = getDayOfWeek(cell.getAttribute("data-day"));
     const startTime = `${cell.getAttribute("data-time")}:00`;
 
@@ -402,11 +390,6 @@ async function saveSelection(groupIds, lessonExists, existingLessonData, modalId
     } catch (error) {
         console.error("Error saving lesson:", error);
     }
-}
-
-function getSelectedWeekTypeForLesson(modalId) {
-    const weekInputs = document.querySelectorAll(`input[type="radio"][name="week-type-${modalId}"]:checked`);
-    return weekInputs.length > 0 ? weekInputs[0].value : null;
 }
 
 function getSelectedWeekType(modalId) {
@@ -823,21 +806,11 @@ async function deleteLesson(lessonId) {
 }
 
 async function deleteSelectedLessons() {
-    if (!window.currentExistingLessons || window.currentExistingLessons.length === 0) {
-        console.warn("Немає уроків для видалення.");
-        return;
-    }
-
     const confirmed = confirm("Ви впевнені, що хочете видалити всі обрані уроки?");
     if (!confirmed) return;
 
     try {
-        await Promise.all(window.currentExistingLessons.map(lesson => deleteLesson(lesson.id)));
-
-        window.currentExistingLessons = [];
-
-        const deleteAllButton = document.getElementById("delete-all-lessons");
-        deleteAllButton.classList.add("hidden");
+        await Promise.all(currentExistingLessons.map(lesson => deleteLesson(lesson.id)));
 
         await generateTable();
         initializeModal();
@@ -847,8 +820,6 @@ async function deleteSelectedLessons() {
         console.error("Помилка при видаленні уроків:", error);
     }
 }
-
-
 
 async function handleResponseError(response) {
     const errorText = await response.text();

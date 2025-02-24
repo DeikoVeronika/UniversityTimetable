@@ -6,9 +6,9 @@
 }
 
 const PROGRAMS = {
-    INFORMATICS: "Інформатика",
     APPLIED_MATH: "Прикладна математика",
     SYSTEM_ANALYSIS: "Системний аналіз",
+    INFORMATICS: "Інформатика",
     SOFTWARE_ENGINEERING: "Програмна інженерія"
 }
 function getGroupsData() {
